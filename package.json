@@ -1,0 +1,49 @@
+{
+  "name": "@brian-ai/langchain",
+  "version": "1.0.0",
+  "description": "Repository containing the LangchainJS toolkit for creating powerful web3 agents.",
+  "repository": {
+    "url": "git+https://github.com/brian-knows/langchain-toolkit"
+  },
+  "main": "./dist/index.js",
+  "exports": {
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "test": "jest"
+  },
+  "keywords": [
+    "brian",
+    "ai",
+    "web3",
+    "typescript",
+    "javascript",
+    "sdk",
+    "agents"
+  ],
+  "author": "Brian",
+  "license": "MIT",
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@types/bun": "latest",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@brian-ai/sdk": "^0.3.1",
+    "@langchain/core": "^0.3.17",
+    "dotenv": "^16.4.5",
+    "ky": "^1.5.0",
+    "langchain": "^0.3.5",
+    "openai": "^4.71.1",
+    "viem": "^2.21.43",
+    "zod": "^3.23.8"
+  }
+}
