@@ -3,9 +3,15 @@ import { BaseToolkit, type ToolInterface } from "@langchain/core/tools";
 import type { Account, Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import {
+  createBorrowTool,
   createBridgeTool,
+  createDepositTool,
+  createGetBalanceTool,
   createParametersExtractionTool,
+  createRepayTool,
   createSwapTool,
+  createTransferTool,
+  createWithdrawTool,
 } from "./tools";
 
 export type BrianToolkitOptions = {
@@ -33,6 +39,12 @@ export class BrianToolkit extends BaseToolkit {
       createParametersExtractionTool(this.brianSDK, this.account),
       createSwapTool(this.brianSDK, this.account),
       createBridgeTool(this.brianSDK, this.account),
+      createDepositTool(this.brianSDK, this.account),
+      createWithdrawTool(this.brianSDK, this.account),
+      createBorrowTool(this.brianSDK, this.account),
+      createRepayTool(this.brianSDK, this.account),
+      createTransferTool(this.brianSDK, this.account),
+      createGetBalanceTool(this.brianSDK, this.account),
     ];
   }
 }
