@@ -25,7 +25,7 @@ npm install @brian-ai/langchain
 
 ```typescript
 import { createBrianAgent } from "@brian-ai/agent";
-import { ChatOpenAI } from "langchain/chat_models/openai";
+import { ChatOpenAI } from "@langchain/openai";
 
 const agent = await createBrianAgent({
   apiKey: "your-brian-api-key",

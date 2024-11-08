@@ -1,14 +1,13 @@
-import type { BaseLanguageModelInterface } from "@langchain/core/language_models/base";
+import type { LanguageModelLike } from "@langchain/core/language_models/base";
 import { BrianToolkit, type BrianToolkitOptions } from "./toolkit.js";
-import { AgentExecutor, createReactAgent } from "langchain/agents";
-import { pull } from "langchain/hub";
-import { PromptTemplate } from "@langchain/core/prompts";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
 
 export * from "./tool.js";
 export * from "./toolkit.js";
 
 export type BrianAgentOptions = BrianToolkitOptions & {
-  llm: BaseLanguageModelInterface;
+  llm: LanguageModelLike;
 };
 
 export const createBrianAgent = async ({
@@ -23,11 +22,22 @@ export const createBrianAgent = async ({
     privateKeyOrAccount,
   });
 
-  const prompt = await pull<PromptTemplate>("hwchase17/react");
-  const reactAgent = await createReactAgent({ llm, tools, prompt });
+  const prompt = ChatPromptTemplate.fromMessages([
+    ["system", "You are a web3 helpful assistant"],
+    ["placeholder", "{chat_history}"],
+    ["human", "{input}"],
+    ["placeholder", "{agent_scratchpad}"],
+  ]);
+
+  const agent = createToolCallingAgent({
+    llm,
+    tools,
+    prompt,
+  });
 
   return new AgentExecutor({
-    agent: reactAgent,
+    agent,
     tools,
+    // verbose: true,
   });
 };

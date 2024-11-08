@@ -7,7 +7,6 @@ import {
   createBridgeTool,
   createDepositTool,
   createGetBalanceTool,
-  createParametersExtractionTool,
   createRepayTool,
   createSwapTool,
   createTransferTool,
@@ -36,7 +35,7 @@ export class BrianToolkit extends BaseToolkit {
 
     this.brianSDK = new BrianSDK({ apiKey, apiUrl });
     this.tools = [
-      createParametersExtractionTool(this.brianSDK, this.account),
+      //createParametersExtractionTool(this.brianSDK, this.account),
       createSwapTool(this.brianSDK, this.account),
       createBridgeTool(this.brianSDK, this.account),
       createDepositTool(this.brianSDK, this.account),
