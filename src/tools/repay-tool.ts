@@ -67,7 +67,7 @@ export const createRepayTool = (brianSDK: BrianSDK, account: Account) => {
           });
 
           console.log(
-            `Repay executed, tx hash: ${txHash} -- waiting for confirmation.`
+            `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
           );
 
           const { transactionHash } =
@@ -78,9 +78,9 @@ export const createRepayTool = (brianSDK: BrianSDK, account: Account) => {
           console.log(
             `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
           );
-
-          return `Repay executed successfully! I've borrowed ${amount} of ${token} on ${chain}.`;
         }
+
+        return `Repay executed successfully! I've borrowed ${amount} of ${token} on ${chain}.`;
       }
 
       return "No transaction to be executed from this prompt. Maybe you should try with another one?";

@@ -26,7 +26,7 @@ describe("@brian-ai/langchain tests", async () => {
     "it should swap two tokens",
     async () => {
       await brianAgent.invoke({
-        input: "Swap 1 USDC to ETH on Ethereum",
+        input: "Swap 0.00034 of ETH to USDC on Optimism",
       });
     },
     TIMEOUT

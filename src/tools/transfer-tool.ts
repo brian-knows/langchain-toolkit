@@ -68,7 +68,7 @@ export const createTransferTool = (brianSDK: BrianSDK, account: Account) => {
           });
 
           console.log(
-            `Transfer executed, tx hash: ${txHash} -- waiting for confirmation.`
+            `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
           );
 
           const { transactionHash } =
@@ -79,9 +79,8 @@ export const createTransferTool = (brianSDK: BrianSDK, account: Account) => {
           console.log(
             `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
           );
-
-          return `Transfer executed successfully! I've transferred ${amount} of ${token} to ${receiver} on ${chain}.`;
         }
+        return `Transfer executed successfully! I've transferred ${amount} of ${token} to ${receiver} on ${chain}.`;
       }
 
       return "No transaction to be executed from this prompt. Maybe you should try with another one?";
