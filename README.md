@@ -1,6 +1,6 @@
 # 🤖 @brian-ai/langchain
 
-> **Attention**: this repository has not been published yet, and it's still under active development.
+> **Attention**: this repository it's still under active development. Expect bugs and breaking changes. Use it at your own risk.
 
 A powerful TypeScript SDK for creating [Langchain](https://langchain.com) agents that can interact with the blockchain.
 
