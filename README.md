@@ -39,6 +39,21 @@ const result = await agent.invoke({
 });
 ```
 
+### 🔩 Using the toolkit
+
+You could also import directly the `BrianToolkit` in your agent without the need of using the `createBrianAgent` function:
+
+```typescript
+import { BrianToolkit } from "@brian-ai/agent";
+
+const { tools } = new BrianToolkit({
+  apiKey: "your-brian-api-key",
+  privateKeyOrAccount: "your-private-key-or-account",
+});
+
+// import the tools into your own agent
+```
+
 ## 🛠️ Available Tools
 
 The SDK includes several tools for different blockchain operations:
@@ -74,3 +89,7 @@ This project is licensed under the terms of the `MIT` license. See [LICENSE](/LI
 ## ‼️ Disclaimer
 
 _This code is being provided as is. No guarantee, representation or warranty is being made, express or implied, as to the safety or correctness of the code. It has not been audited and as such there can be no assurance it will work as intended, and users may experience delays, failures, errors, omissions or loss of transmitted information. Nothing in this repo should be construed as investment advice or legal advice for any particular facts or circumstances and is not meant to replace competent counsel. It is strongly advised for you to contact a reputable attorney in your jurisdiction for any questions or concerns with respect thereto. Brian is not liable for any use of the foregoing, and users should proceed with caution and use at their own risk._
+
+```
+
+```
