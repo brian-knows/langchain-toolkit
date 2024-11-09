@@ -39,12 +39,12 @@ const result = await agent.invoke({
 });
 ```
 
-### 🔩 Using the toolkit
+### 🔩 Using the Brian toolkit
 
 You could also import directly the `BrianToolkit` in your agent without the need of using the `createBrianAgent` function:
 
 ```typescript
-import { BrianToolkit } from "@brian-ai/agent";
+import { BrianToolkit } from "@brian-ai/langchain";
 
 const { tools } = new BrianToolkit({
   apiKey: "your-brian-api-key",
@@ -54,7 +54,7 @@ const { tools } = new BrianToolkit({
 // import the tools into your own agent
 ```
 
-## 🛠️ Available Tools
+### 🛠️ Available Tools
 
 The SDK includes several tools for different blockchain operations:
 
@@ -69,6 +69,68 @@ The SDK includes several tools for different blockchain operations:
 
 > **Note**: all the actions above will be executed by the **agent** account using the private key provided. This means that some funds could be lost in the process in case of errors.
 
+## 🔵 Using CDP Wallets
+
+The SDK also supports the creation of Agents that use the **CDP SDK** instead of **viem** for the wallet.
+
+```typescript
+import { createBrianAgent } from "@brian-ai/langchain";
+import { ChatOpenAI } from "@langchain/openai";
+
+// load the wallet data into a variable
+const walletData = /* ... */
+
+const agent = await createBrianCDPAgent({
+  apiKey: "your-brian-api-key",
+  coinbaseApiKey: "your-coinbase-api-key-name",
+  coinbaseApiKeySecret: "your-coinbase-api-key-secret",
+  walletData,
+  llm: new ChatOpenAI(),
+});
+
+// Execute blockchain operations using natural language
+const result = await agent.invoke({
+  input: "Swap 100 USDC for ETH on Ethereum",
+});
+```
+
+### 🔩 Using the Brian CDP toolkit
+
+You could also import directly the `BrianCDPToolkit` in your agent without the need of using the `createBrianCDPAgent` function:
+
+```typescript
+import { BrianCDPToolkit } from "@brian-ai/langchain";
+
+const brianCDPToolkit = new BrianCDPToolkit({
+  apiKey: "your-brian-api-key",
+  coinbaseApiKey: "your-coinbase-api-key-name",
+  coinbaseApiKeySecret: "your-coinbase-api-key-secret",
+});
+
+// load the wallet data into a variable
+const walletData = /* ... */
+
+const { tools } = await brianCDPToolkit.setup({ walletData })
+
+// import the tools into your own agent
+```
+
+### 🛠️ CDP Available Tools
+
+The SDK includes several tools for different blockchain operations:
+
+- **Swap**: Exchange tokens on various chains
+- **Bridge**: Transfer tokens across different blockchains
+- **Deposit**: Deposit tokens into DeFi protocols
+- **Withdraw**: Withdraw tokens from DeFi protocols
+- **Transfer**: Send tokens to other addresses
+- **Balance**: Check token balances
+- **Deploy NFT**: Deploy an NFT contract
+- **Deploy Token**: Deploy an ERC-20 token
+- **Faucet**: Gets some faucet tokens (only on Base Sepolia)
+
+> **Note**: all the actions above will be executed by the **agent** account using the CDP wallet provided. This means that some funds could be lost in the process in case of errors.
+
 ## ⚙️ Architecture
 
 The SDK is built on top of LangChain's agent framework and uses:
@@ -77,6 +139,7 @@ The SDK is built on top of LangChain's agent framework and uses:
 - [viem](https://viem.sh/) for blockchain interactions
 - [LangChain](https://js.langchain.com/docs/introduction/) for agent orchestration
 - [Brian](https://www.brianknows.org) AI SDK for transaction processing
+- [CDP SDK](https://coinbase.github.io/coinbase-sdk-nodejs/index.html) for the Brian CDP Agent
 
 ## 🤝🏻 Contributing
 
