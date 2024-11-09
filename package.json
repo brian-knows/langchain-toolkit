@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@brian-ai/sdk": "^0.3.1",
+    "@coinbase/coinbase-sdk": "^0.10.0",
     "@langchain/core": "^0.3.17",
     "@langchain/openai": "^0.3.12",
     "dotenv": "^16.4.5",
