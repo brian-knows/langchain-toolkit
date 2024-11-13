@@ -1,4 +1,4 @@
-import { Run } from "@langchain/core/dist/tracers/base";
+import { Run } from "@langchain/core/tracers/base";
 
 export const tryJsonStringify = (obj: unknown, fallback: string) => {
   try {

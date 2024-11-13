@@ -1,4 +1,4 @@
-import { AgentRun, BaseTracer, Run } from "@langchain/core/dist/tracers/base";
+import { AgentRun, BaseTracer, Run } from "@langchain/core/tracers/base";
 import { HandlerContext } from "@xmtp/message-kit";
 import { tryJsonStringify, formatKVMapItem } from "./utils";
 import { LanguageModelLike } from "@langchain/core/language_models/base";
