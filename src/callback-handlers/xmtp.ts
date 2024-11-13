@@ -2,22 +2,33 @@ import { AgentRun, BaseTracer, Run } from "@langchain/core/tracers/base";
 import { HandlerContext } from "@xmtp/message-kit";
 import { tryJsonStringify, formatKVMapItem } from "./utils";
 import { LanguageModelLike } from "@langchain/core/language_models/base";
+import { AIMessage } from "@langchain/core/messages";
+
+const generateSystemTemplate = (instructions: string) => {
+  return [
+    instructions,
+    "Generate a message based on the context that the user will provide. This message must be human-readable without any complex terms.",
+    "Your message will be sent to a chat, so make sure it is clear and concise.",
+    "Speak in first person, since the context that you will receive will be related to your actions and thoughts.",
+  ].join("\n");
+};
 
 const generateMessage = async (
   llm: LanguageModelLike,
   instructions: string,
   context: string
-) => {
-  return await llm.invoke([
+): Promise<string> => {
+  const result: AIMessage | string = await llm.invoke([
     {
       role: "system",
-      content: instructions,
+      content: generateSystemTemplate(instructions),
     },
     {
       role: "user",
       content: context,
     },
   ]);
+  return typeof result === "string" ? result : result.text;
 };
 
 export type XMTPCallbackHandlerOptions = {
@@ -127,9 +138,9 @@ export class XMTPCallbackHandler extends BaseTracer {
       `You are entering the chain of thoughts with this input: ${tryJsonStringify(
         run.inputs,
         "[inputs]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      )}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -146,9 +157,9 @@ export class XMTPCallbackHandler extends BaseTracer {
       `You are exiting the chain of thoughts with this output: ${tryJsonStringify(
         run.outputs,
         "[outputs]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      )}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -162,12 +173,9 @@ export class XMTPCallbackHandler extends BaseTracer {
     const message = await generateMessage(
       this.llm,
       this.instructions,
-      `Chain run errored with error: ${tryJsonStringify(
-        run.error,
-        "[error]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      `Chain run errored with error: ${tryJsonStringify(run.error, "[error]")}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -188,9 +196,9 @@ export class XMTPCallbackHandler extends BaseTracer {
       `You are entering the LLM run with this input: ${tryJsonStringify(
         inputs,
         "[inputs]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      )}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -207,9 +215,9 @@ export class XMTPCallbackHandler extends BaseTracer {
       `You are exiting the LLM run with this output: ${tryJsonStringify(
         run.outputs,
         "[outputs]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      )}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -223,12 +231,9 @@ export class XMTPCallbackHandler extends BaseTracer {
     const message = await generateMessage(
       this.llm,
       this.instructions,
-      `LLM run errored with error: ${tryJsonStringify(
-        run.error,
-        "[error]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      `LLM run errored with error: ${tryJsonStringify(run.error, "[error]")}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -245,9 +250,9 @@ export class XMTPCallbackHandler extends BaseTracer {
       `You are entering the Tool run with this input: ${tryJsonStringify(
         run.inputs,
         "[inputs]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      )}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -263,9 +268,9 @@ export class XMTPCallbackHandler extends BaseTracer {
       this.instructions,
       `You are exiting the Tool run with this output: "${formatKVMapItem(
         run.outputs?.output
-      )}".\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      )}".`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -279,12 +284,9 @@ export class XMTPCallbackHandler extends BaseTracer {
     const message = await generateMessage(
       this.llm,
       this.instructions,
-      `Tool run errored with error: ${tryJsonStringify(
-        run.error,
-        "[error]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      `Tool run errored with error: ${tryJsonStringify(run.error, "[error]")}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -301,9 +303,9 @@ export class XMTPCallbackHandler extends BaseTracer {
       `You are entering the Retriever run with this input: ${tryJsonStringify(
         run.inputs,
         "[inputs]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      )}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -320,9 +322,9 @@ export class XMTPCallbackHandler extends BaseTracer {
       `You are exiting the Retriever run with this output: ${tryJsonStringify(
         run.outputs,
         "[outputs]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      )}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -339,9 +341,9 @@ export class XMTPCallbackHandler extends BaseTracer {
       `Retriever run errored with error: ${tryJsonStringify(
         run.error,
         "[error]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      )}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 
   /**
@@ -359,8 +361,8 @@ export class XMTPCallbackHandler extends BaseTracer {
       `Agent selected action: ${tryJsonStringify(
         agentRun.actions[agentRun.actions.length - 1],
         "[action]"
-      )}.\n\nThese are the past thoughts that led to this chain: ${crumbs}`
+      )}.`
     );
-    await this.xmtpHandler.send(message.toString());
+    await this.xmtpHandler.send(message);
   }
 }

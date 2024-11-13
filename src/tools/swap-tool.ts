@@ -4,6 +4,7 @@ import { BrianSDK } from "@brian-ai/sdk";
 import {
   createPublicClient,
   createWalletClient,
+  formatUnits,
   http,
   type Account,
 } from "viem";
@@ -39,7 +40,7 @@ export const createSwapTool = (brianSDK: BrianSDK, account: Account) => {
 
         const [tx] = brianTx;
         const { data } = tx;
-        const transactionLinks = [];
+        let lastTxLink = "";
 
         if (data.steps && data.steps.length > 0) {
           const chainId = data.fromChainId;
@@ -72,11 +73,6 @@ export const createSwapTool = (brianSDK: BrianSDK, account: Account) => {
             console.log(
               `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
             );
-            if (xmtpContext) {
-              await xmtpContext.reply(
-                `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
-              );
-            }
 
             const { transactionHash } =
               await publicClient.waitForTransactionReceipt({
@@ -86,17 +82,14 @@ export const createSwapTool = (brianSDK: BrianSDK, account: Account) => {
             console.log(
               `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
             );
-            if (xmtpContext) {
-              await xmtpContext.reply(
-                `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
-              );
-            }
-            transactionLinks.push(
-              `${network.blockExplorers?.default.url}/tx/${transactionHash}`
-            );
+
+            lastTxLink = `${network.blockExplorers?.default.url}/tx/${transactionHash}`;
           }
 
-          return `Swap executed successfully between ${amount} of ${tokenIn} and ${data.toAmountMin} of ${tokenOut} on ${chain}.`;
+          return `Swap executed successfully between ${amount} of ${tokenIn} and ${formatUnits(
+            BigInt(data.toAmountMin!),
+            data.toToken?.decimals || 18
+          )} of ${tokenOut} on ${chain}. You can check the transaction here: ${lastTxLink}`;
         }
 
         return "No transaction to be executed from this prompt. Maybe you should try with another one?";

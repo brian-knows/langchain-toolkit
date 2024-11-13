@@ -38,6 +38,7 @@ export const createWithdrawTool = (brianSDK: BrianSDK, account: Account) => {
 
       const [tx] = brianTx;
       const { data } = tx;
+      let lastTxLink = "";
 
       if (data.steps && data.steps.length > 0) {
         const chainId = data.fromChainId;
@@ -79,8 +80,9 @@ export const createWithdrawTool = (brianSDK: BrianSDK, account: Account) => {
           console.log(
             `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
           );
+          lastTxLink = `${network.blockExplorers?.default.url}/tx/${transactionHash}`;
         }
-        return `Withdraw executed successfully! I've withdrawn ${amount} of ${tokenIn} on ${protocol} on ${chain}`;
+        return `Withdraw executed successfully! I've withdrawn ${amount} of ${tokenIn} on ${protocol} on ${chain}. You can check the transaction here: ${lastTxLink}`;
       }
 
       return "No transaction to be executed from this prompt. Maybe you should try with another one?";
