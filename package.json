@@ -1,6 +1,6 @@
 {
   "name": "@brian-ai/langchain",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Repository containing the LangchainJS toolkit for creating powerful web3 agents.",
   "repository": {
     "url": "git+https://github.com/brian-knows/langchain-toolkit"
@@ -41,6 +41,7 @@
     "@coinbase/coinbase-sdk": "^0.10.0",
     "@langchain/core": "^0.3.17",
     "@langchain/openai": "^0.3.12",
+    "@xmtp/message-kit": "^1.1.7-beta.26",
     "dotenv": "^16.4.5",
     "ky": "^1.5.0",
     "langchain": "^0.3.5",
