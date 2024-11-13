@@ -8,6 +8,7 @@ import {
   type Account,
 } from "viem";
 import { getChain } from "../utils";
+import { HandlerContext } from "@xmtp/message-kit";
 
 const repayToolSchema = z.object({
   token: z.string(),
@@ -15,7 +16,11 @@ const repayToolSchema = z.object({
   amount: z.string(),
 });
 
-export const createRepayTool = (brianSDK: BrianSDK, account: Account) => {
+export const createRepayTool = (
+  brianSDK: BrianSDK,
+  account: Account,
+  xmtpContext?: HandlerContext
+) => {
   return new BrianTool({
     name: "repay",
     description:
@@ -69,6 +74,11 @@ export const createRepayTool = (brianSDK: BrianSDK, account: Account) => {
           console.log(
             `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
           );
+          if (xmtpContext) {
+            await xmtpContext.reply(
+              `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
+            );
+          }
 
           const { transactionHash } =
             await publicClient.waitForTransactionReceipt({
@@ -78,6 +88,11 @@ export const createRepayTool = (brianSDK: BrianSDK, account: Account) => {
           console.log(
             `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
           );
+          if (xmtpContext) {
+            await xmtpContext.reply(
+              `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
+            );
+          }
         }
 
         return `Repay executed successfully! I've borrowed ${amount} of ${token} on ${chain}.`;

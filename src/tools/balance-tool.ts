@@ -2,6 +2,7 @@ import { z } from "zod";
 import { BrianTool } from "../tool";
 import { BrianSDK } from "@brian-ai/sdk";
 import { type Account } from "viem";
+import { HandlerContext } from "@xmtp/message-kit";
 
 const balanceToolSchema = z.object({
   token: z.string(),
@@ -9,7 +10,11 @@ const balanceToolSchema = z.object({
   address: z.string().or(z.undefined()),
 });
 
-export const createGetBalanceTool = (brianSDK: BrianSDK, account: Account) => {
+export const createGetBalanceTool = (
+  brianSDK: BrianSDK,
+  account: Account,
+  xmtpContext?: HandlerContext
+) => {
   return new BrianTool({
     name: "get_balance",
     description:

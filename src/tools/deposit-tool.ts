@@ -8,6 +8,7 @@ import {
   type Account,
 } from "viem";
 import { getChain } from "../utils";
+import { HandlerContext } from "@xmtp/message-kit";
 
 const depositToolSchema = z.object({
   tokenIn: z.string(),
@@ -16,7 +17,11 @@ const depositToolSchema = z.object({
   protocol: z.string(),
 });
 
-export const createDepositTool = (brianSDK: BrianSDK, account: Account) => {
+export const createDepositTool = (
+  brianSDK: BrianSDK,
+  account: Account,
+  xmtpContext?: HandlerContext
+) => {
   return new BrianTool({
     name: "deposit",
     description:
@@ -70,6 +75,11 @@ export const createDepositTool = (brianSDK: BrianSDK, account: Account) => {
           console.log(
             `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
           );
+          if (xmtpContext) {
+            await xmtpContext.reply(
+              `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
+            );
+          }
 
           const { transactionHash } =
             await publicClient.waitForTransactionReceipt({
@@ -79,6 +89,11 @@ export const createDepositTool = (brianSDK: BrianSDK, account: Account) => {
           console.log(
             `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
           );
+          if (xmtpContext) {
+            await xmtpContext.reply(
+              `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
+            );
+          }
         }
         return `Deposit executed successfully! I've deposited ${amount} of ${tokenIn} on ${protocol} on ${chain}.`;
       }
