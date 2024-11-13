@@ -8,7 +8,6 @@ import {
   type Account,
 } from "viem";
 import { getChain } from "../utils";
-import { HandlerContext } from "@xmtp/message-kit";
 
 const swapToolSchema = z.object({
   tokenIn: z.string(),
@@ -17,11 +16,7 @@ const swapToolSchema = z.object({
   amount: z.string(),
 });
 
-export const createSwapTool = (
-  brianSDK: BrianSDK,
-  account: Account,
-  xmtpContext?: HandlerContext
-) => {
+export const createSwapTool = (brianSDK: BrianSDK, account: Account) => {
   return new BrianTool({
     name: "swap",
     description:
@@ -101,11 +96,7 @@ export const createSwapTool = (
             );
           }
 
-          return `Swap executed successfully between ${amount} of ${tokenIn} and ${
-            data.toAmountMin
-          } of ${tokenOut} on ${chain}.\n\nTransactions executed:\n${transactionLinks.map(
-            (link) => `- ${link}\n`
-          )}`;
+          return `Swap executed successfully between ${amount} of ${tokenIn} and ${data.toAmountMin} of ${tokenOut} on ${chain}.`;
         }
 
         return "No transaction to be executed from this prompt. Maybe you should try with another one?";

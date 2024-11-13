@@ -12,27 +12,19 @@ import {
   createTransferTool,
   createWithdrawTool,
 } from "./tools";
-import { HandlerContext } from "@xmtp/message-kit";
 
 export type BrianToolkitOptions = {
   apiKey: string;
   privateKeyOrAccount: Hex | Account;
   apiUrl?: string;
-  xmtpContext?: HandlerContext;
 };
 
 export class BrianToolkit extends BaseToolkit {
   account: Account;
   brianSDK: BrianSDK;
   tools: ToolInterface[];
-  xmtpContext?: HandlerContext;
 
-  constructor({
-    apiKey,
-    apiUrl,
-    privateKeyOrAccount,
-    xmtpContext,
-  }: BrianToolkitOptions) {
+  constructor({ apiKey, apiUrl, privateKeyOrAccount }: BrianToolkitOptions) {
     super();
 
     if (typeof privateKeyOrAccount === "string") {
@@ -42,17 +34,16 @@ export class BrianToolkit extends BaseToolkit {
     }
 
     this.brianSDK = new BrianSDK({ apiKey, apiUrl });
-    this.xmtpContext = xmtpContext;
     this.tools = [
       //createParametersExtractionTool(this.brianSDK, this.account),
-      createSwapTool(this.brianSDK, this.account, this.xmtpContext),
-      createBridgeTool(this.brianSDK, this.account, this.xmtpContext),
-      createDepositTool(this.brianSDK, this.account, this.xmtpContext),
-      createWithdrawTool(this.brianSDK, this.account, this.xmtpContext),
-      createBorrowTool(this.brianSDK, this.account, this.xmtpContext),
-      createRepayTool(this.brianSDK, this.account, this.xmtpContext),
-      createTransferTool(this.brianSDK, this.account, this.xmtpContext),
-      createGetBalanceTool(this.brianSDK, this.account, this.xmtpContext),
+      createSwapTool(this.brianSDK, this.account),
+      createBridgeTool(this.brianSDK, this.account),
+      createDepositTool(this.brianSDK, this.account),
+      createWithdrawTool(this.brianSDK, this.account),
+      createBorrowTool(this.brianSDK, this.account),
+      createRepayTool(this.brianSDK, this.account),
+      createTransferTool(this.brianSDK, this.account),
+      createGetBalanceTool(this.brianSDK, this.account),
     ];
   }
 }

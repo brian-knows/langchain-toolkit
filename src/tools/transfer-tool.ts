@@ -8,7 +8,6 @@ import {
   type Account,
 } from "viem";
 import { getChain } from "../utils";
-import { HandlerContext } from "@xmtp/message-kit";
 
 const transferToolSchema = z.object({
   token: z.string(),
@@ -17,11 +16,7 @@ const transferToolSchema = z.object({
   receiver: z.string(),
 });
 
-export const createTransferTool = (
-  brianSDK: BrianSDK,
-  account: Account,
-  xmtpContext?: HandlerContext
-) => {
+export const createTransferTool = (brianSDK: BrianSDK, account: Account) => {
   return new BrianTool({
     name: "transfer",
     description:
@@ -43,7 +38,6 @@ export const createTransferTool = (
 
       const [tx] = brianTx;
       const { data } = tx;
-      const transactionLinks = [];
 
       if (data.steps && data.steps.length > 0) {
         const chainId = data.fromChainId;
@@ -76,11 +70,6 @@ export const createTransferTool = (
           console.log(
             `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
           );
-          if (xmtpContext) {
-            await xmtpContext.reply(
-              `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
-            );
-          }
 
           const { transactionHash } =
             await publicClient.waitForTransactionReceipt({
@@ -90,18 +79,8 @@ export const createTransferTool = (
           console.log(
             `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
           );
-          if (xmtpContext) {
-            await xmtpContext.reply(
-              `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
-            );
-          }
-          transactionLinks.push(
-            `${network.blockExplorers?.default.url}/tx/${transactionHash}`
-          );
         }
-        return `Transfer executed successfully! I've transferred ${amount} of ${token} to ${receiver} on ${chain}.\n\nTransactions executed:\n${transactionLinks.map(
-          (link) => `- ${link}\n`
-        )}`;
+        return `Transfer executed successfully! I've transferred ${amount} of ${token} to ${receiver} on ${chain}`;
       }
 
       return "No transaction to be executed from this prompt. Maybe you should try with another one?";

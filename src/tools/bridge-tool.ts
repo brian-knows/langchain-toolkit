@@ -8,7 +8,6 @@ import {
   type Account,
 } from "viem";
 import { getChain } from "../utils";
-import { HandlerContext } from "@xmtp/message-kit";
 
 const bridgeToolSchema = z.object({
   tokenIn: z.string(),
@@ -17,11 +16,7 @@ const bridgeToolSchema = z.object({
   amount: z.string(),
 });
 
-export const createBridgeTool = (
-  brianSDK: BrianSDK,
-  account: Account,
-  xmtpContext?: HandlerContext
-) => {
+export const createBridgeTool = (brianSDK: BrianSDK, account: Account) => {
   return new BrianTool({
     name: "bridge",
     description:
@@ -43,7 +38,6 @@ export const createBridgeTool = (
 
       const [tx] = brianTx;
       const { data } = tx;
-      const transactionLinks = [];
 
       if (data.steps && data.steps.length > 0) {
         const chainId = data.fromChainId;
@@ -76,11 +70,6 @@ export const createBridgeTool = (
           console.log(
             `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
           );
-          if (xmtpContext) {
-            await xmtpContext.reply(
-              `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
-            );
-          }
 
           const { transactionHash } =
             await publicClient.waitForTransactionReceipt({
@@ -90,19 +79,9 @@ export const createBridgeTool = (
           console.log(
             `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
           );
-          if (xmtpContext) {
-            await xmtpContext.reply(
-              `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
-            );
-          }
-          transactionLinks.push(
-            `${network.blockExplorers?.default.url}/tx/${transactionHash}`
-          );
         }
 
-        return `Bridge executed successfully! I've moved ${amount} of ${tokenIn} from ${inputChain} to ${outputChain}.\n\nTransactions executed:\n${transactionLinks.map(
-          (link) => `- ${link}\n`
-        )}`;
+        return `Bridge executed successfully! I've moved ${amount} of ${tokenIn} from ${inputChain} to ${outputChain}`;
       }
 
       return "No transaction to be executed from this prompt. Maybe you should try with another one?";

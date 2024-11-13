@@ -3,6 +3,11 @@ import { BrianToolkit, type BrianToolkitOptions } from "./toolkit.js";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
 import { BrianCDPToolkit, type BrianCDPToolkitOptions } from "./cdp-toolkit.js";
+import { HandlerContext } from "@xmtp/message-kit";
+import {
+  XMTPCallbackHandler,
+  XMTPCallbackHandlerOptions,
+} from "./callback-handlers/xmtp.js";
 
 export * from "./tool.js";
 export * from "./toolkit.js";
@@ -10,6 +15,8 @@ export * from "./toolkit.js";
 export type BrianAgentOptions = BrianToolkitOptions & {
   llm: LanguageModelLike;
   instructions?: string;
+  xmtpHandler?: HandlerContext;
+  xmtpHandlerOptions?: XMTPCallbackHandlerOptions;
 };
 
 export const createBrianAgent = async ({
@@ -18,6 +25,8 @@ export const createBrianAgent = async ({
   apiUrl,
   privateKeyOrAccount,
   llm,
+  xmtpHandler,
+  xmtpHandlerOptions,
 }: BrianAgentOptions) => {
   const { tools } = new BrianToolkit({
     apiKey,
@@ -41,12 +50,24 @@ export const createBrianAgent = async ({
   return new AgentExecutor({
     agent,
     tools,
+    callbacks: xmtpHandler
+      ? [
+          new XMTPCallbackHandler(
+            xmtpHandler,
+            llm,
+            instructions,
+            xmtpHandlerOptions
+          ),
+        ]
+      : [],
   });
 };
 
 export type BrianAgentCDPOptions = BrianCDPToolkitOptions & {
   llm: LanguageModelLike;
   instructions?: string;
+  xmtpHandler?: HandlerContext;
+  xmtpHandlerOptions?: XMTPCallbackHandlerOptions;
 };
 
 export const createBrianCDPAgent = async ({
@@ -60,6 +81,8 @@ export const createBrianCDPAgent = async ({
   coinbaseFilePath,
   coinbaseOptions,
   llm,
+  xmtpHandler,
+  xmtpHandlerOptions,
 }: BrianAgentCDPOptions) => {
   const brianCDPToolkit = new BrianCDPToolkit({
     apiKey,
@@ -91,5 +114,15 @@ export const createBrianCDPAgent = async ({
   return new AgentExecutor({
     agent,
     tools,
+    callbacks: xmtpHandler
+      ? [
+          new XMTPCallbackHandler(
+            xmtpHandler,
+            llm,
+            instructions,
+            xmtpHandlerOptions
+          ),
+        ]
+      : [],
   });
 };
