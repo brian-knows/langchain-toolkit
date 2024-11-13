@@ -141,6 +141,56 @@ The SDK is built on top of LangChain's agent framework and uses:
 - [Brian](https://www.brianknows.org) AI SDK for transaction processing
 - [CDP SDK](https://coinbase.github.io/coinbase-sdk-nodejs/index.html) for the Brian CDP Agent
 
+## 🤙🏻 Callback Handlers
+
+This SDK also contains some useful callback handlers to log the agent's thoughts and actions.
+
+### 💬 XMTPCallbackHandler
+
+The `XMTPCallbackHandler` sends the agent's thoughts and actions using the `HandlerContext` from XMTP. To create an XMTP-powered agent, you can use the following quick-start code:
+
+```typescript
+import { HandlerContext, run } from "@xmtp/message-kit";
+import { createBrianAgent } from "@brian-ai/langchain";
+import { ChatOpenAI } from "@langchain/openai";
+
+run(async (context: HandlerContext) => {
+  const brianAgent = await createBrianAgent({
+    apiKey: process.env.BRIAN_API_KEY!,
+    privateKeyOrAccount: process.env.AGENT_PRIVATE_KEY as `0x${string}`,
+    llm: new ChatOpenAI({ apiKey: process.env.OPENAI_API_KEY }),
+    xmtpHandler: context,
+    xmtpHandlerOptions: {
+      onAgentAction: true,
+      onToolStart: true,
+    },
+  });
+  const { content } = context.message;
+  const result = await brianAgent.invoke({ input: content.text });
+  await context.send(result.output);
+});
+```
+
+You can customize which messages are sent to the XMTP handler by setting the `xmtpHandlerOptions` object. The available options are (by default they are all set to `false`):
+
+```typescript
+type XMTPCallbackHandlerOptions = {
+  onChainStart?: boolean; // sends a message when the chain starts
+  onChainEnd?: boolean; // sends a message when the chain ends
+  onChainError?: boolean; // sends a message when the chain errors
+  onLLMStart?: boolean; // sends a message when the LLM starts
+  onLLMEnd?: boolean; // sends a message when the LLM ends
+  onLLMError?: boolean; // sends a message when the LLM errors
+  onToolStart?: boolean; // sends a message when a tool starts
+  onToolEnd?: boolean; // sends a message when a tool ends
+  onToolError?: boolean; // sends a message when a tool errors
+  onRetrieverStart?: boolean; // sends a message when the retriever starts
+  onRetrieverEnd?: boolean; // sends a message when the retriever ends
+  onRetrieverError?: boolean; // sends a message when the retriever errors
+  onAgentAction?: boolean; // sends a message when the agent performs an action
+};
+```
+
 ## 🤝🏻 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
