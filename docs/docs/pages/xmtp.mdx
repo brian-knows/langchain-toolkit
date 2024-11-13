@@ -1,0 +1,84 @@
+# XMTP Support
+
+All the agents inside the `@brian-ai/langchain` package can leverage an XMTP `HandlerContext` as a callback handler to send the agent's thoughts and actions in an XMTP chat.
+
+## What are callback handlers?
+
+Langchain offers a powerful callback system that allows you to hook into the various stages of your LLM application.
+This is useful for logging, monitoring, streaming, and other tasks.
+
+## XMTPCallbackHandler
+
+We developed a powerful `XMTPCallbackHandler` that allows you to send your agent's thoughts and actions to an XMTP chat.
+
+It's also fully customizable and you can choose which callbacks are handled and which are not via its configuration:
+
+```typescript
+type XMTPCallbackHandlerOptions = {
+  onChainStart?: boolean; // sends a message when the chain starts
+  onChainEnd?: boolean; // sends a message when the chain ends
+  onChainError?: boolean; // sends a message when the chain errors
+  onLLMStart?: boolean; // sends a message when the LLM starts
+  onLLMEnd?: boolean; // sends a message when the LLM ends
+  onLLMError?: boolean; // sends a message when the LLM errors
+  onToolStart?: boolean; // sends a message when a tool starts
+  onToolEnd?: boolean; // sends a message when a tool ends
+  onToolError?: boolean; // sends a message when a tool errors
+  onRetrieverStart?: boolean; // sends a message when the retriever starts
+  onRetrieverEnd?: boolean; // sends a message when the retriever ends
+  onRetrieverError?: boolean; // sends a message when the retriever errors
+  onAgentAction?: boolean; // sends a message when the agent performs an action
+};
+```
+
+## Usage
+
+In the context of an XMTP bot, you just need to pass the `HandlerContext` to your agent and define the callbacks options:
+
+```typescript
+import { HandlerContext, run } from "@xmtp/message-kit";
+import { createBrianAgent } from "@brian-ai/langchain";
+import { ChatOpenAI } from "@langchain/openai";
+
+run(async (context: HandlerContext) => {
+  const brianAgent = await createBrianAgent({
+    apiKey: process.env.BRIAN_API_KEY!,
+    privateKeyOrAccount: process.env.AGENT_PRIVATE_KEY as `0x${string}`,
+    llm: new ChatOpenAI({ apiKey: process.env.OPENAI_API_KEY }),
+    xmtpHandler: context,
+    xmtpHandlerOptions: {
+      onAgentAction: true,
+      onToolStart: true,
+    },
+  });
+  const { content } = context.message;
+  const result = await brianAgent.invoke({ input: content.text });
+  await context.send(result.output);
+});
+```
+
+You can also use a CDP wallet agent with the XMTP handler:
+
+```typescript
+import { HandlerContext, run } from "@xmtp/message-kit";
+import { createBrianCDPAgent } from "@brian-ai/langchain";
+import { ChatOpenAI } from "@langchain/openai";
+
+run(async (context: HandlerContext) => {
+  const brianAgent = await createBrianCDPAgent({
+    apiKey: process.env.BRIAN_API_KEY!,
+    coinbaseApiKeyName: process.env.COINBASE_API_KEY_NAME!,
+    coinbaseApiKeySecret: process.env.COINBASE_API_KEY_SECRET!,
+    llm: new ChatOpenAI({ apiKey: process.env.OPENAI_API_KEY }),
+    walletData: JSON.parse(process.env.COINBASE_WALLET_DATA!),
+    xmtpHandler: context,
+    xmtpHandlerOptions: {
+      onAgentAction: true,
+      onToolStart: true,
+    },
+  });
+  const { content } = context.message;
+  const result = await brianAgent.invoke({ input: content.text });
+  await context.send(result.output);
+});
+```

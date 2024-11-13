@@ -77,14 +77,11 @@ The SDK also supports the creation of Agents that use the **CDP SDK** instead of
 import { createBrianAgent } from "@brian-ai/langchain";
 import { ChatOpenAI } from "@langchain/openai";
 
-// load the wallet data into a variable
-const walletData = /* ... */
-
 const agent = await createBrianCDPAgent({
   apiKey: "your-brian-api-key",
   coinbaseApiKey: "your-coinbase-api-key-name",
   coinbaseApiKeySecret: "your-coinbase-api-key-secret",
-  walletData,
+  walletData: JSON.parse(process.env.COINBASE_WALLET_DATA!),
   llm: new ChatOpenAI(),
 });
 

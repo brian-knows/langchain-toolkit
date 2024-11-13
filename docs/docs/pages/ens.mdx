@@ -1,0 +1,31 @@
+# ENS Support
+
+All the tools, toolkits and agents in this package that leverage the Brian APIs support the use of ENS names as addresses.
+
+This means that you can use ENS names in place of Ethereum addresses in all the tools, toolkits and agents that interact with the Brian supported chains.
+
+## Examples
+
+These are some examples of agents leveraging ENS support.
+
+### Transfering ERC-20 tokens
+
+```typescript
+await brianAgent.invoke({ input: "Transfer 100 USDC to orbulo.eth" });
+```
+
+### Swapping tokens and sending them to an ENS
+
+```typescript
+await brianAgent.invoke({
+  input: "Swap 100 USDC to DAI and send them to orbulo.eth",
+});
+```
+
+### Checking the balance of an ENS
+
+```typescript
+await brianAgent.invoke({
+  input: "What is the USDC balance of orbulo.eth on Base?",
+});
+```

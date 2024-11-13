@@ -1,0 +1,35 @@
+# CDP Agent
+
+The `CDPAgent` is a `langchain` agent that leverages the Brian APIs and execute operations on the provided Coinbase MPC-wallet.
+
+## Usage
+
+Creating a `CDPAgent` takes few lines of code:
+
+```typescript
+import { createBrianAgent } from "@brian-ai/langchain";
+import { ChatOpenAI } from "@langchain/openai";
+
+const agent = await createBrianCDPAgent({
+  apiKey: "your-brian-api-key",
+  coinbaseApiKey: "your-coinbase-api-key-name",
+  coinbaseApiKeySecret: "your-coinbase-api-key-secret",
+  walletData: JSON.parse(process.env.COINBASE_WALLET_DATA!),
+  llm: new ChatOpenAI(),
+});
+```
+
+## Invoking the agent
+
+Once the agent is created, you can invoke it with a given input:
+
+```typescript
+const response = await agent.invoke({
+  input:
+    "Deploy an ERC-20 token named BrianToken and symbol BRT with 100000 total supply",
+});
+```
+
+## CDP Agent Toolkit
+
+The `CDPAgent` has a set of tools that can be used to interact with the Brian APIs. Please refer to the [CDP Toolkit](/toolkits/cdp) for more information.

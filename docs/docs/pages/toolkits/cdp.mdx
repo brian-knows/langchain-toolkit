@@ -1,0 +1,170 @@
+# CDP Toolkit
+
+The `CDPToolkit` is a `langchain` toolkit that can be imported in your agent to interact with the Brian APIs and execute operations on a Coinbase MPC-wallet.
+
+## Usage
+
+You can import directly the `CDPToolkit` in your agent without the need of using the `createBrianCDPAgent` function:
+
+```typescript
+import { BrianCDPToolkit } from "@brian-ai/langchain";
+
+const brianCDPToolkit = new BrianCDPToolkit({
+  apiKey: "your-brian-api-key",
+  coinbaseApiKey: "your-coinbase-api-key-name",
+  coinbaseApiKeySecret: "your-coinbase-api-key-secret",
+});
+
+// load the wallet data into a variable
+const walletData = JSON.parse(process.env.CDP_WALLET_DATA!);
+
+const { tools } = await brianCDPToolkit.setup({ walletData });
+
+// import the tools into your own agent
+```
+
+:::danger
+**We do not encourage the use of the tools directly, but rather the import of the whole `BrianCDPToolkit` or using the `BrianCDPAgent` directly.**
+:::
+
+## Tools
+
+Every tool inside the `CDPToolkit` is an object of the following class that extends the `DynamicStructuredTool` class from `langchain`:
+
+```typescript
+class BrianCDPTool extends DynamicStructuredTool {
+  brianSDK: BrianSDK;
+  wallet: Wallet;
+
+  constructor(
+    fields: DynamicStructuredToolInput & {
+      brianSDK: BrianSDK;
+      wallet: Wallet;
+    }
+  ) {
+    super(fields);
+    this.brianSDK = fields.brianSDK;
+    this.wallet = fields.wallet;
+  }
+}
+```
+
+### Balance tool
+
+The **balance** tool is a tool that allows the agent to retrieve the balance of a native/ERC-20 token of a given wallet.
+
+```typescript
+await balanceTool.invoke({
+  token: "USDC",
+  chain: "Base",
+  address: "orbulo.eth",
+});
+```
+
+### Bridge tool
+
+The **bridge** tool is a tool that allows the agent to bridge assets between different chains.
+
+```typescript
+await bridgeTool.invoke({
+  fromChain: "Base",
+  toChain: "Polygon",
+  token: "USDC",
+  amount: 100,
+});
+```
+
+### Deploy NFT tool
+
+The **deployNFT** tool is a tool that allows the agent to deploy an NFT on your wallet chain.
+
+```typescript
+await deployNFTTool.invoke({
+  name: "BrianNFT",
+  symbol: "NFT",
+  baseURI: "https://brian-nft-uri.com",
+});
+```
+
+### Deploy token tool
+
+The **deployToken** tool is a tool that allows the agent to deploy an ERC-20 token on your wallet chain.
+
+```typescript
+await deployTokenTool.invoke({
+  name: "BrianToken",
+  symbol: "BRT",
+  totalSupply: 1000000,
+});
+```
+
+### Deposit tool
+
+The **deposit** tool is a tool that allows the agent to deposit a given amount of a token inside a protocol.
+
+```typescript
+await depositTool.invoke({
+  tokenIn: "USDC",
+  chain: "Ethereum",
+  amount: 100,
+  protocol: "AAVE",
+});
+```
+
+### Faucet funds tool
+
+The **faucetFunds** tool is a tool that allows the agent to request funds from a faucet on Base Sepolia testnet.
+
+```typescript
+await faucetFundsTool.invoke({
+  assetId: "ETH",
+});
+```
+
+### Swap tool
+
+The **swap** tool is a tool that allows the agent to swap two tokens (native -> native, native -> erc20, erc20 -> native).
+
+It also supports cross-chain swaps and swaps that specifiy an address receiver.
+
+```typescript
+await swapTool.invoke({
+  tokenIn: "USDC",
+  tokenOut: "ETH",
+  amount: 100,
+  chain: "Base",
+});
+```
+
+### Transfer tool
+
+The **transfer** tool is a tool that allows the agent to transfer a given amount of a token to a given address.
+
+```typescript
+await transferTool.invoke({
+  token: "USDC",
+  amount: 100,
+  receiver: "orbulo.eth",
+});
+```
+
+### Wallet tool
+
+The **wallet** tool is a tool that allows the agent to retrieve info about its wallet.
+
+```typescript
+await walletTool.invoke();
+```
+
+### Withdraw tool
+
+The **withdraw** tool is a tool that allows the agent to withdraw a given amount of previously deposited tokens inside a protocol.
+
+```typescript
+await withdrawTool.invoke({
+  tokenIn: "USDC",
+  chain: "Ethereum",
+  amount: 100,
+  protocol: "AAVE",
+});
+```

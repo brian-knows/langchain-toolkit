@@ -1,0 +1,32 @@
+# Brian Agent
+
+The `BrianAgent` is a `langchain` agent that leverages the Brian APIs and execute operations on the provided wallet.
+
+## Usage
+
+Creating a `BrianAgent` takes literally few lines of code:
+
+```typescript
+import { createBrianAgent } from "@brian-ai/agent";
+import { ChatOpenAI } from "@langchain/openai";
+
+const agent = await createBrianAgent({
+  apiKey: "your-brian-api-key",
+  privateKeyOrAccount: "your-private-key-or-account",
+  llm: new ChatOpenAI(),
+});
+```
+
+## Invoking the agent
+
+Once the agent is created, you can invoke it with a given input:
+
+```typescript
+const response = await agent.invoke({
+  input: "What is the USDC balance of orbulo.eth on Base?",
+});
+```
+
+## Brian Agent toolkit
+
+The `BrianAgent` has a set of tools that can be used to interact with the Brian APIs. Please refer to the [Brian Toolkit](/toolkits/brian) for more information.

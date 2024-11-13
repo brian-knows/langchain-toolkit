@@ -32,8 +32,56 @@ export default defineConfig({
   ],
   sidebar: [
     {
-      text: "Getting Started",
+      text: "🚀 Getting Started",
       link: "/getting-started",
+    },
+    {
+      text: "📕 Guidelines",
+      link: "/guidelines",
+    },
+    {
+      text: "🛠️ Toolkits",
+      collapsed: false,
+      items: [
+        {
+          text: "Brian Toolkit",
+          link: "/toolkits/brian",
+        },
+        {
+          text: "CDP Toolkit",
+          link: "/toolkits/cdp",
+        },
+        {
+          text: "Starknet Toolkit",
+          link: "/toolkits/starknet",
+        },
+      ],
+    },
+    {
+      text: "🤖 Agents",
+      collapsed: false,
+      items: [
+        {
+          text: "Brian Agent",
+          link: "/agents/brian",
+        },
+        {
+          text: "CDP Agent",
+          link: "/agents/cdp",
+        },
+        {
+          text: "Starknet Agent",
+          link: "/agents/starknet",
+        },
+      ],
+    },
+    {
+      text: "💬 XMTP Support",
+      link: "/xmtp",
+    },
+    {
+      text: "🔷 ENS Support",
+      link: "/ens",
     },
   ],
 });

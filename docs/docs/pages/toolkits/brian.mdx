@@ -1,0 +1,150 @@
+# Brian Toolkit
+
+The `BrianToolkit` is a `langchain` toolkit that can be imported in your agent to interact with the Brian APIs and execute operations with a wallet.
+
+## Usage
+
+You can import directly the `BrianToolkit` in your agent without the need of using the `createBrianAgent` function:
+
+```typescript
+import { BrianToolkit } from "@brian-ai/langchain";
+
+const { tools } = new BrianToolkit({
+  apiKey: "your-brian-api-key",
+  privateKeyOrAccount: "your-private-key-or-account",
+});
+
+// import the tools in your langchain agent
+```
+
+## Tools
+
+Every tool inside the `BrianToolkit` is an object of the following class that extends the `DynamicStructuredTool` class from `langchain`:
+
+```typescript
+class BrianTool extends DynamicStructuredTool {
+  brianSDK: BrianSDK;
+  account: Account;
+
+  constructor(
+    fields: DynamicStructuredToolInput & {
+      brianSDK: BrianSDK;
+      account: Account;
+    }
+  ) {
+    super(fields);
+    this.brianSDK = fields.brianSDK;
+    this.account = fields.account;
+  }
+}
+```
+
+Every tool this way has access to the `BrianSDK` instance and to the `Account` instance that are used to interact with the Brian APIs and the wallet respectively.
+
+These are all the tools currently supported by the toolkit.
+
+:::danger
+**We do not encourage the use of the tools directly, but rather the import of the whole `BrianToolkit` or using the `BrianAgent` directly.**
+:::
+
+### Balance tool
+
+The **balance** tool is a tool that allows the agent to retrieve the balance of a native/ERC-20 token of a given wallet.
+
+```typescript
+await balanceTool.invoke({
+  token: "USDC",
+  chain: "Base",
+  address: "orbulo.eth",
+});
+```
+
+### Borrow tool
+
+The **borrow** tool is a tool that allows the agent to borrow a given amount of a token from AAVE.
+
+```typescript
+await borrowTool.invoke({
+  token: "USDC",
+  chain: "Ethereum",
+  amount: 100,
+});
+```
+
+### Bridge tool
+
+The **bridge** tool is a tool that allows the agent to bridge tokens from one chain to another.
+
+```typescript
+await bridgeTool.invoke({
+  tokenIn: "USDC",
+  inputChain: "Base",
+  outputChain: "zkSync",
+  amount: 100,
+});
+```
+
+### Deposit tool
+
+The **deposit** tool is a tool that allows the agent to deposit a given amount of a token inside a protocol.
+
+```typescript
+await depositTool.invoke({
+  tokenIn: "USDC",
+  chain: "Ethereum",
+  amount: 100,
+  protocol: "AAVE",
+});
+```
+
+### Repay tool
+
+The **repay** tool is a tool that allows the agent to repay a given amount of borrowed tokens to AAVE.
+
+```typescript
+await repayTool.invoke({
+  token: "USDC",
+  chain: "Ethereum",
+  amount: 100,
+});
+```
+
+### Swap tool
+
+The **swap** tool is a tool that allows the agent to swap two tokens (native -> native, native -> erc20, erc20 -> native).
+
+It also supports cross-chain swaps and swaps that specifiy an address receiver.
+
+```typescript
+await swapTool.invoke({
+  tokenIn: "USDC",
+  tokenOut: "ETH",
+  amount: 100,
+  chain: "Base",
+});
+```
+
+### Transfer tool
+
+The **transfer** tool is a tool that allows the agent to transfer a given amount of a token to a given address.
+
+```typescript
+await transferTool.invoke({
+  token: "USDC",
+  amount: 100,
+  receiver: "orbulo.eth",
+});
+```
+
+### Withdraw tool
+
+The **withdraw** tool is a tool that allows the agent to withdraw a given amount of previously deposited tokens inside a protocol.
+
+```typescript
+await withdrawTool.invoke({
+  tokenIn: "USDC",
+  chain: "Ethereum",
+  amount: 100,
+  protocol: "AAVE",
+});
+```
