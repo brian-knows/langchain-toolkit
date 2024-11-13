@@ -44,6 +44,7 @@ export const createSwapTool = (
 
         const [tx] = brianTx;
         const { data } = tx;
+        const transactionLinks = [];
 
         if (data.steps && data.steps.length > 0) {
           const chainId = data.fromChainId;
@@ -95,9 +96,16 @@ export const createSwapTool = (
                 `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
               );
             }
+            transactionLinks.push(
+              `${network.blockExplorers?.default.url}/tx/${transactionHash}`
+            );
           }
 
-          return `Swap executed successfully between ${amount} of ${tokenIn} and ${data.toAmountMin} of ${tokenOut} on ${chain}.`;
+          return `Swap executed successfully between ${amount} of ${tokenIn} and ${
+            data.toAmountMin
+          } of ${tokenOut} on ${chain}.\n\nTransactions executed:\n${transactionLinks.map(
+            (link) => `- ${link}\n`
+          )}`;
         }
 
         return "No transaction to be executed from this prompt. Maybe you should try with another one?";

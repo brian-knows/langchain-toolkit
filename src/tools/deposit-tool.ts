@@ -43,6 +43,7 @@ export const createDepositTool = (
 
       const [tx] = brianTx;
       const { data } = tx;
+      const transactionLinks = [];
 
       if (data.steps && data.steps.length > 0) {
         const chainId = data.fromChainId;
@@ -94,8 +95,13 @@ export const createDepositTool = (
               `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
             );
           }
+          transactionLinks.push(
+            `${network.blockExplorers?.default.url}/tx/${transactionHash}`
+          );
         }
-        return `Deposit executed successfully! I've deposited ${amount} of ${tokenIn} on ${protocol} on ${chain}.`;
+        return `Deposit executed successfully! I've deposited ${amount} of ${tokenIn} on ${protocol} on ${chain}.\n\nTransactions executed:\n${transactionLinks.map(
+          (link) => `- ${link}\n`
+        )}`;
       }
 
       return "No transaction to be executed from this prompt. Maybe you should try with another one?";
