@@ -1,0 +1,95 @@
+# Get started
+
+`@brian-ai/langchain` is a powerful SDK that simplifies the process of building powerful Langchain web3 agents that can interact with the blockchain using their wallet.
+
+::::steps
+
+### Install the package
+
+:::code-group
+
+```bash [bun]
+bun i @brian-ai/langchain
+```
+
+```bash [npm]
+npm i @brian-ai/langchain
+```
+
+```bash [yarn]
+yarn add @brian-ai/langchain
+```
+
+```bash [pnpm]
+pnpm add @brian-ai/langchain
+```
+
+:::
+
+### Set environment file
+
+Create a `.env` file adding the following environment variables:
+
+```bash
+# .env
+BRIAN_API_KEY="brian_api_key"
+AGENT_PRIVATE_KEY="0xprivatekey"
+OPENAI_PRIVATE_KEY="openai_api_key"
+```
+
+### Add `langchain` packages
+
+:::code-group
+
+```bash [bun]
+bun i @langchain/core @langchain/openai
+```
+
+```bash [npm]
+npm i @langchain/core @langchain/openai
+```
+
+```bash [yarn]
+yarn add @langchain/core @langchain/openai
+```
+
+```bash [pnpm]
+pnpm add @langchain/core @langchain/openai
+```
+
+:::
+
+### Create your first agent
+
+Create a new file under `src/index.ts` and add the following code:
+
+```typescript
+import { createBrianAgent } from "@brian-ai/agent";
+import { ChatOpenAI } from "@langchain/openai";
+
+const main = async () => {
+  const agent = await createBrianAgent({
+    apiKey: process.env.BRIAN_API_KEY!,
+    privateKeyOrAccount: process.env.AGENT_PRIVATE_KEY! as `0x${string}`,
+    llm: new ChatOpenAI(),
+  });
+
+  // Execute blockchain operations using natural language
+  const result = await agent.invoke({
+    input: "Swap 1 USDC for ETH on Ethereum",
+  });
+  console.log(result);
+};
+
+main();
+```
+
+### Run the agent
+
+In the example we're using `bun` to run the project. You can also compile it to `js` and run it using `node`.
+
+```bash
+bun src/index.ts
+```
+
+::::
