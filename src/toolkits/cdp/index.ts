@@ -12,7 +12,7 @@ import {
   createCDPDeployTokenTool,
   createCDPGetFaucetFundsTool,
   createCDPGetWalletTool,
-} from "./cdp-tools";
+} from "./tools";
 
 export type BrianCDPToolkitOptions = {
   apiKey: string;

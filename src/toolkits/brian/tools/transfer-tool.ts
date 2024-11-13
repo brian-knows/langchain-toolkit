@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BrianTool } from "../tool";
+import { BrianTool } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
 import {
   createPublicClient,
@@ -7,25 +7,25 @@ import {
   http,
   type Account,
 } from "viem";
-import { getChain } from "../utils";
+import { getChain } from "@/utils";
 
-const depositToolSchema = z.object({
-  tokenIn: z.string(),
+const transferToolSchema = z.object({
+  token: z.string(),
   chain: z.string(),
   amount: z.string(),
-  protocol: z.string(),
+  receiver: z.string(),
 });
 
-export const createDepositTool = (brianSDK: BrianSDK, account: Account) => {
+export const createTransferTool = (brianSDK: BrianSDK, account: Account) => {
   return new BrianTool({
-    name: "deposit",
+    name: "transfer",
     description:
-      "deposits the amount of tokenIn in the given protocol on the given chain",
-    schema: depositToolSchema,
+      "transfers the amount of token to the receiver on the given chain",
+    schema: transferToolSchema,
     brianSDK,
     account,
-    func: async ({ tokenIn, amount, protocol, chain }) => {
-      const prompt = `Deposit ${amount} ${tokenIn} on ${protocol} on ${chain}`;
+    func: async ({ token, chain, amount, receiver }) => {
+      const prompt = `Transfer ${amount} ${token} to ${receiver} on ${chain}`;
 
       const brianTx = await brianSDK.transact({
         prompt,
@@ -33,7 +33,7 @@ export const createDepositTool = (brianSDK: BrianSDK, account: Account) => {
       });
 
       if (brianTx.length === 0) {
-        return "Whoops, could not perform the deposit, an error occurred while calling the Brian APIs.";
+        return "Whoops, could not perform the transfer, an error occurred while calling the Brian APIs.";
       }
 
       const [tx] = brianTx;
@@ -82,7 +82,7 @@ export const createDepositTool = (brianSDK: BrianSDK, account: Account) => {
           );
           lastTxLink = `${network.blockExplorers?.default.url}/tx/${transactionHash}`;
         }
-        return `Deposit executed successfully! I've deposited ${amount} of ${tokenIn} on ${protocol} on ${chain}. You can check the transaction here: ${lastTxLink}`;
+        return `Transfer executed successfully! I've transferred ${amount} of ${token} to ${receiver} on ${chain}. You can check the transaction here: ${lastTxLink}`;
       }
 
       return "No transaction to be executed from this prompt. Maybe you should try with another one?";

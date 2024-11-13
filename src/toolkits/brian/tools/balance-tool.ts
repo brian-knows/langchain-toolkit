@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BrianTool } from "../tool";
+import { BrianTool } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
 import { type Account } from "viem";
 

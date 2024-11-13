@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BrianCDPTool } from "../tool";
+import { BrianCDPTool } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
 import { erc20Abi } from "viem";
 import { Coinbase, Wallet } from "@coinbase/coinbase-sdk";
@@ -10,23 +10,23 @@ import {
   LIDO_ABI,
 } from "./utils";
 
-const depositToolSchema = z.object({
+const withdrawToolSchema = z.object({
   tokenIn: z.string(),
   chain: z.string(),
   amount: z.string(),
   protocol: z.string(),
 });
 
-export const createCDPDepositTool = (brianSDK: BrianSDK, wallet: Wallet) => {
+export const createCDPWithdrawTool = (brianSDK: BrianSDK, wallet: Wallet) => {
   return new BrianCDPTool({
-    name: "deposit",
+    name: "withdraw",
     description:
-      "deposits the amount of tokenIn in the given protocol on the given chain",
-    schema: depositToolSchema,
+      "withdraws the amount of tokenIn in the given protocol on the given chain.",
+    schema: withdrawToolSchema,
     brianSDK,
     wallet,
     func: async ({ tokenIn, amount, protocol, chain }) => {
-      const prompt = `Deposit ${amount} ${tokenIn} on ${protocol} on ${chain}`;
+      const prompt = `Withdraw ${amount} ${tokenIn} on ${protocol} on ${chain}`;
 
       const address = await getAddressFromWallet(wallet);
 
@@ -65,28 +65,28 @@ export const createCDPDepositTool = (brianSDK: BrianSDK, wallet: Wallet) => {
         await erc20ApproveTx.wait();
       }
       //get deposit solver
-      const depositSolver = solver;
+      const withdrawSolver = solver;
       //decode data according to CDP sdk
       const [decodedData, functionName] = decodeFunctionDataForCdp(
-        depositSolver === "Enso" ? ENSO_ROUTER_ABI : LIDO_ABI,
+        withdrawSolver === "Enso" ? ENSO_ROUTER_ABI : LIDO_ABI,
         data.steps![data.steps!.length - 1].data
       );
       //make swap
-      const depositTx = await wallet.invokeContract({
+      const withdrawTx = await wallet.invokeContract({
         contractAddress: data.steps![data.steps!.length - 1].to,
         method: functionName,
-        abi: depositSolver === "Enso" ? ENSO_ROUTER_ABI : LIDO_ABI,
+        abi: withdrawSolver === "Enso" ? ENSO_ROUTER_ABI : LIDO_ABI,
         args: decodedData,
         amount: BigInt(data.steps![data.steps!.length - 1].value),
         assetId: Coinbase.assets.Wei,
       });
-      const receipt = await depositTx.wait();
+      const receipt = await withdrawTx.wait();
       const txLink = receipt.getTransactionLink();
 
       console.log(
         `Transaction executed successfully, this is the transaction link: ${txLink}`
       );
-      return `Deposit executed successfully! I've deposited ${amount} of ${tokenIn} on ${protocol} on ${chain}.`;
+      return `Withdraw executed successfully! I've withdrawn ${amount} of ${tokenIn} on ${protocol} on ${chain}.`;
     },
   });
 };

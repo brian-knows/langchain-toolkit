@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BrianTool } from "../tool";
+import { BrianTool } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
 import {
   createPublicClient,
@@ -7,24 +7,25 @@ import {
   http,
   type Account,
 } from "viem";
-import { getChain } from "../utils";
+import { getChain } from "@/utils";
 
-const borrowToolSchema = z.object({
-  token: z.string(),
-  chain: z.string(),
+const bridgeToolSchema = z.object({
+  tokenIn: z.string(),
+  inputChain: z.string(),
+  outputChain: z.string(),
   amount: z.string(),
 });
 
-export const createBorrowTool = (brianSDK: BrianSDK, account: Account) => {
+export const createBridgeTool = (brianSDK: BrianSDK, account: Account) => {
   return new BrianTool({
-    name: "borrow",
+    name: "bridge",
     description:
-      "borrows the amount of token from aave on the given chain. you must've deposited before to execute this action.",
-    schema: borrowToolSchema,
+      "bridges the amount of tokenIn from the inputChain to the outputChain",
+    schema: bridgeToolSchema,
     brianSDK,
     account,
-    func: async ({ token, amount, chain }) => {
-      const prompt = `Borrow ${amount} ${token} on ${chain}`;
+    func: async ({ tokenIn, inputChain, outputChain, amount }) => {
+      const prompt = `Bridge ${amount} ${tokenIn} from ${inputChain} to ${outputChain}`;
 
       const brianTx = await brianSDK.transact({
         prompt,
@@ -32,12 +33,11 @@ export const createBorrowTool = (brianSDK: BrianSDK, account: Account) => {
       });
 
       if (brianTx.length === 0) {
-        return "Whoops, could not perform the borrow, an error occurred while calling the Brian APIs.";
+        return "Whoops, could not perform the bridge, an error occurred while calling the Brian APIs.";
       }
 
       const [tx] = brianTx;
       const { data } = tx;
-
       let lastTxLink = "";
 
       if (data.steps && data.steps.length > 0) {
@@ -80,11 +80,10 @@ export const createBorrowTool = (brianSDK: BrianSDK, account: Account) => {
           console.log(
             `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
           );
-
           lastTxLink = `${network.blockExplorers?.default.url}/tx/${transactionHash}`;
         }
 
-        return `Borrow executed successfully! I've borrowed ${amount} of ${token} on ${chain}. You can check the transaction here: ${lastTxLink}`;
+        return `Bridge executed successfully! I've moved ${amount} of ${tokenIn} from ${inputChain} to ${outputChain}. You can check the transaction here: ${lastTxLink}`;
       }
 
       return "No transaction to be executed from this prompt. Maybe you should try with another one?";

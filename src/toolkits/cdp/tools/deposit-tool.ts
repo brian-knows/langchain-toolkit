@@ -1,33 +1,32 @@
 import { z } from "zod";
-import { BrianCDPTool } from "../tool";
+import { BrianCDPTool } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
 import { erc20Abi } from "viem";
-import { Coinbase, type Wallet } from "@coinbase/coinbase-sdk";
+import { Coinbase, Wallet } from "@coinbase/coinbase-sdk";
 import {
-  BUNGEE_ROUTER_ABI,
+  getAddressFromWallet,
   decodeFunctionDataForCdp,
   ENSO_ROUTER_ABI,
-  getAddressFromWallet,
-  LIFI_ROUTER_ABI,
+  LIDO_ABI,
 } from "./utils";
 
-const swapToolSchema = z.object({
+const depositToolSchema = z.object({
   tokenIn: z.string(),
-  tokenOut: z.string(),
   chain: z.string(),
   amount: z.string(),
+  protocol: z.string(),
 });
 
-export const createCDPSwapTool = (brianSDK: BrianSDK, wallet: Wallet) => {
+export const createCDPDepositTool = (brianSDK: BrianSDK, wallet: Wallet) => {
   return new BrianCDPTool({
-    name: "swap",
+    name: "deposit",
     description:
-      "swaps the amount of tokenIn with the tokenOut on the given chain",
-    schema: swapToolSchema,
+      "deposits the amount of tokenIn in the given protocol on the given chain",
+    schema: depositToolSchema,
     brianSDK,
     wallet,
-    func: async ({ tokenIn, tokenOut, chain, amount }) => {
-      const prompt = `Swap ${amount} ${tokenIn} for ${tokenOut} on ${chain}`;
+    func: async ({ tokenIn, amount, protocol, chain }) => {
+      const prompt = `Deposit ${amount} ${tokenIn} on ${protocol} on ${chain}`;
 
       const address = await getAddressFromWallet(wallet);
 
@@ -37,7 +36,7 @@ export const createCDPSwapTool = (brianSDK: BrianSDK, wallet: Wallet) => {
       });
 
       if (brianTx.length === 0) {
-        return "Whoops, could not perform the swap, an error occurred while calling the Brian APIs.";
+        return "Whoops, could not perform the deposit, an error occurred while calling the Brian APIs.";
       }
 
       const [tx] = brianTx;
@@ -65,35 +64,29 @@ export const createCDPSwapTool = (brianSDK: BrianSDK, wallet: Wallet) => {
         });
         await erc20ApproveTx.wait();
       }
-      //retrieve swap data
-      const solverAbi =
-        solver === "Enso"
-          ? ENSO_ROUTER_ABI
-          : solver === "Bungee"
-          ? BUNGEE_ROUTER_ABI
-          : LIFI_ROUTER_ABI;
-
+      //get deposit solver
+      const depositSolver = solver;
       //decode data according to CDP sdk
       const [decodedData, functionName] = decodeFunctionDataForCdp(
-        solverAbi,
+        depositSolver === "Enso" ? ENSO_ROUTER_ABI : LIDO_ABI,
         data.steps![data.steps!.length - 1].data
       );
       //make swap
-      const swapTx = await wallet.invokeContract({
+      const depositTx = await wallet.invokeContract({
         contractAddress: data.steps![data.steps!.length - 1].to,
         method: functionName,
-        abi: solverAbi,
+        abi: depositSolver === "Enso" ? ENSO_ROUTER_ABI : LIDO_ABI,
         args: decodedData,
         amount: BigInt(data.steps![data.steps!.length - 1].value),
         assetId: Coinbase.assets.Wei,
       });
-      const receipt = await swapTx.wait();
+      const receipt = await depositTx.wait();
       const txLink = receipt.getTransactionLink();
 
       console.log(
         `Transaction executed successfully, this is the transaction link: ${txLink}`
       );
-      return `Swap executed successfully between ${amount} of ${tokenIn} and ${data.toAmountMin} of ${tokenOut} on ${chain}.`;
+      return `Deposit executed successfully! I've deposited ${amount} of ${tokenIn} on ${protocol} on ${chain}.`;
     },
   });
 };

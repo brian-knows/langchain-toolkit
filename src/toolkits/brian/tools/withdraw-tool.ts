@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BrianTool } from "../tool";
+import { BrianTool } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
 import {
   createPublicClient,
@@ -7,25 +7,25 @@ import {
   http,
   type Account,
 } from "viem";
-import { getChain } from "../utils";
+import { getChain } from "@/utils";
 
-const transferToolSchema = z.object({
-  token: z.string(),
+const withdrawToolSchema = z.object({
+  tokenIn: z.string(),
   chain: z.string(),
   amount: z.string(),
-  receiver: z.string(),
+  protocol: z.string(),
 });
 
-export const createTransferTool = (brianSDK: BrianSDK, account: Account) => {
+export const createWithdrawTool = (brianSDK: BrianSDK, account: Account) => {
   return new BrianTool({
-    name: "transfer",
+    name: "withdraw",
     description:
-      "transfers the amount of token to the receiver on the given chain",
-    schema: transferToolSchema,
+      "withdraws the amount of tokenIn in the given protocol on the given chain.",
+    schema: withdrawToolSchema,
     brianSDK,
     account,
-    func: async ({ token, chain, amount, receiver }) => {
-      const prompt = `Transfer ${amount} ${token} to ${receiver} on ${chain}`;
+    func: async ({ tokenIn, amount, protocol, chain }) => {
+      const prompt = `Withdraw ${amount} ${tokenIn} on ${protocol} on ${chain}`;
 
       const brianTx = await brianSDK.transact({
         prompt,
@@ -33,7 +33,7 @@ export const createTransferTool = (brianSDK: BrianSDK, account: Account) => {
       });
 
       if (brianTx.length === 0) {
-        return "Whoops, could not perform the transfer, an error occurred while calling the Brian APIs.";
+        return "Whoops, could not perform the withdraw, an error occurred while calling the Brian APIs.";
       }
 
       const [tx] = brianTx;
@@ -82,7 +82,7 @@ export const createTransferTool = (brianSDK: BrianSDK, account: Account) => {
           );
           lastTxLink = `${network.blockExplorers?.default.url}/tx/${transactionHash}`;
         }
-        return `Transfer executed successfully! I've transferred ${amount} of ${token} to ${receiver} on ${chain}. You can check the transaction here: ${lastTxLink}`;
+        return `Withdraw executed successfully! I've withdrawn ${amount} of ${tokenIn} on ${protocol} on ${chain}. You can check the transaction here: ${lastTxLink}`;
       }
 
       return "No transaction to be executed from this prompt. Maybe you should try with another one?";

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BrianCDPTool } from "../tool";
+import { BrianCDPTool } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
 import { erc20Abi } from "viem";
 import { Coinbase, type Wallet } from "@coinbase/coinbase-sdk";

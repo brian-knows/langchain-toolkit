@@ -1,1 +1,1 @@
-export * from "./xmtp";
+export * from "./xmtp.js";

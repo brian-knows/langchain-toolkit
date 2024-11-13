@@ -1,7 +1,7 @@
 import type { BrianSDK } from "@brian-ai/sdk";
 import type { Wallet } from "@coinbase/coinbase-sdk";
 import { z } from "zod";
-import { BrianCDPTool } from "../tool";
+import { BrianCDPTool } from "./tool.js";
 
 const deployNftSchema = z.object({
   name: z.string(),

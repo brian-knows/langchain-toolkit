@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BrianTool } from "../tool";
+import { BrianTool } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
 import {
   createPublicClient,
@@ -7,25 +7,24 @@ import {
   http,
   type Account,
 } from "viem";
-import { getChain } from "../utils";
+import { getChain } from "@/utils";
 
-const withdrawToolSchema = z.object({
-  tokenIn: z.string(),
+const borrowToolSchema = z.object({
+  token: z.string(),
   chain: z.string(),
   amount: z.string(),
-  protocol: z.string(),
 });
 
-export const createWithdrawTool = (brianSDK: BrianSDK, account: Account) => {
+export const createBorrowTool = (brianSDK: BrianSDK, account: Account) => {
   return new BrianTool({
-    name: "withdraw",
+    name: "borrow",
     description:
-      "withdraws the amount of tokenIn in the given protocol on the given chain.",
-    schema: withdrawToolSchema,
+      "borrows the amount of token from aave on the given chain. you must've deposited before to execute this action.",
+    schema: borrowToolSchema,
     brianSDK,
     account,
-    func: async ({ tokenIn, amount, protocol, chain }) => {
-      const prompt = `Withdraw ${amount} ${tokenIn} on ${protocol} on ${chain}`;
+    func: async ({ token, amount, chain }) => {
+      const prompt = `Borrow ${amount} ${token} on ${chain}`;
 
       const brianTx = await brianSDK.transact({
         prompt,
@@ -33,11 +32,12 @@ export const createWithdrawTool = (brianSDK: BrianSDK, account: Account) => {
       });
 
       if (brianTx.length === 0) {
-        return "Whoops, could not perform the withdraw, an error occurred while calling the Brian APIs.";
+        return "Whoops, could not perform the borrow, an error occurred while calling the Brian APIs.";
       }
 
       const [tx] = brianTx;
       const { data } = tx;
+
       let lastTxLink = "";
 
       if (data.steps && data.steps.length > 0) {
@@ -80,9 +80,11 @@ export const createWithdrawTool = (brianSDK: BrianSDK, account: Account) => {
           console.log(
             `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
           );
+
           lastTxLink = `${network.blockExplorers?.default.url}/tx/${transactionHash}`;
         }
-        return `Withdraw executed successfully! I've withdrawn ${amount} of ${tokenIn} on ${protocol} on ${chain}. You can check the transaction here: ${lastTxLink}`;
+
+        return `Borrow executed successfully! I've borrowed ${amount} of ${token} on ${chain}. You can check the transaction here: ${lastTxLink}`;
       }
 
       return "No transaction to be executed from this prompt. Maybe you should try with another one?";

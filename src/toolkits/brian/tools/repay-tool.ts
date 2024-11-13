@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BrianTool } from "../tool";
+import { BrianTool } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
 import {
   createPublicClient,
@@ -7,7 +7,7 @@ import {
   http,
   type Account,
 } from "viem";
-import { getChain } from "../utils";
+import { getChain } from "@/utils";
 
 const repayToolSchema = z.object({
   token: z.string(),
