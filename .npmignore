@@ -1,0 +1,13 @@
+/src
+/node_modules
+/.github
+/test
+
+.env
+.DS_Store
+.vscode
+
+tsconfig.json
+tsup.config.ts
+jest.config.ts
+bun.lockb
