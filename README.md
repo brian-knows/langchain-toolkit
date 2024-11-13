@@ -171,6 +171,32 @@ run(async (context: HandlerContext) => {
 });
 ```
 
+You can also of course use a CDP wallet agent with the XMTP handler:
+
+```typescript
+import { HandlerContext, run } from "@xmtp/message-kit";
+import { createBrianCDPAgent } from "@brian-ai/langchain";
+import { ChatOpenAI } from "@langchain/openai";
+
+run(async (context: HandlerContext) => {
+  const brianAgent = await createBrianCDPAgent({
+    apiKey: process.env.BRIAN_API_KEY!,
+    coinbaseApiKeyName: process.env.COINBASE_API_KEY_NAME!,
+    coinbaseApiKeySecret: process.env.COINBASE_API_KEY_SECRET!,
+    llm: new ChatOpenAI({ apiKey: process.env.OPENAI_API_KEY }),
+    walletData: JSON.parse(process.env.COINBASE_WALLET_DATA!),
+    xmtpHandler: context,
+    xmtpHandlerOptions: {
+      onAgentAction: true,
+      onToolStart: true,
+    },
+  });
+  const { content } = context.message;
+  const result = await brianAgent.invoke({ input: content.text });
+  await context.send(result.output);
+});
+```
+
 You can customize which messages are sent to the XMTP handler by setting the `xmtpHandlerOptions` object. The available options are (by default they are all set to `false`):
 
 ```typescript
