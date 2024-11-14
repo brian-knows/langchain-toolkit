@@ -20,17 +20,15 @@ describe("@brian-ai/langchain tests", async () => {
     apiKey: BRIAN_API_KEY,
     privateKeyOrAccount: PRIVATE_KEY as `0x${string}`,
     llm: new ChatOpenAI(),
-    options: {
-      gelatoApiKey: process.env.GELATO_API_KEY,
-    },
   });
 
   test(
     "it should swap two tokens",
     async () => {
-      await brianAgent.invoke({
-        input: "Swap 0.00034 of ETH to USDC on Optimism",
+      const res = await brianAgent.invoke({
+        input: "What is the ETH balance of orbulo.eth on Base?",
       });
+      console.log(res.output);
     },
     TIMEOUT
   );

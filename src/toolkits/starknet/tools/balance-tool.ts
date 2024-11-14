@@ -19,7 +19,6 @@ export const createStarknetGetBalanceTool = (
     schema: balanceToolSchema,
     brianSDK,
     account,
-    responseFormat: "json",
     func: async ({ token, address }) => {
       const prompt = `What is the ${token} balance of ${
         address || account.address
@@ -32,17 +31,12 @@ export const createStarknetGetBalanceTool = (
       });
 
       if (brianTx.length === 0) {
-        return {
-          description: `The ${token} balance of ${
-            address || account.address
-          } is 0.`,
-          value: 0,
-        };
+        return `The ${token} balance of ${address || account.address} is 0.`;
       }
 
       const [tx] = brianTx;
 
-      return tx.data;
+      return tx.data.description;
     },
   });
 };

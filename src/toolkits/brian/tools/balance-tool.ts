@@ -17,7 +17,6 @@ export const createGetBalanceTool = (brianSDK: BrianSDK, account: Account) => {
     schema: balanceToolSchema,
     brianSDK,
     account,
-    responseFormat: "json",
     func: async ({ token, chain, address }) => {
       const prompt = `What is the ${token} balance of ${
         address || account.address
@@ -29,17 +28,14 @@ export const createGetBalanceTool = (brianSDK: BrianSDK, account: Account) => {
       });
 
       if (brianTx.length === 0) {
-        return {
-          description: `The ${token} balance of ${
-            address || account.address
-          } is 0 on ${chain}.`,
-          value: 0,
-        };
+        return `The ${token} balance of ${
+          address || account.address
+        } is 0 on ${chain}.`;
       }
 
       const [tx] = brianTx;
 
-      return tx.data;
+      return tx.data.description;
     },
   });
 };
