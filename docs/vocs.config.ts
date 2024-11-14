@@ -7,7 +7,7 @@ export default defineConfig({
   },
   topNav: [
     {
-      text: "Brian App",
+      text: "Brian",
       link: "https://brianknows.org",
     },
     {
