@@ -1,5 +1,40 @@
 # Gelato Integration
 
+When creating a `BrianAgent` or when initializing the `BrianToolkit` for using the tools in your own custom agents, you can pass a `gelatoApiKey` option to enable the Gelato integration.
+
+If a `gelatoApiKey` is provided, the Agent (or the tools) will send the transactions using the `GelatoRelay` using the `sponsoredCallERC2771` method.
+
+## Examples
+
+### Using `createBrianAgent`
+
+```typescript
+const brianAgent = await createBrianAgent({
+  apiKey: BRIAN_API_KEY,
+  privateKeyOrAccount: PRIVATE_KEY as `0x${string}`,
+  llm: new ChatOpenAI(),
+  options: {
+    gelatoApiKey: process.env.GELATO_API_KEY,
+  },
+});
+```
+
+### Using the `BrianToolkit`
+
+```typescript
+const { tools } = new BrianToolkit({
+  apiKey: BRIAN_API_KEY,
+  privateKeyOrAccount: PRIVATE_KEY as `0x${string}`,
+  options: { gelatoApiKey: process.env.GELATO_API_KEY },
+});
+```
+
+## Web3 Functions
+
+Gelato's **Web3 Functions** is a powerful automation system designed to streamline and enhance Web3 operations. Web3 Functions serve as a comprehensive tool, enabling developers to effortlessly set up, manage, and automate their smart contract tasks.
+
+Read more about them [here](https://docs.gelato.network/web3-services/web3-functions).
+
 :::warning
 ⚠️ This page is still under construction. ⚠️
 :::
