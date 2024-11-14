@@ -11,7 +11,7 @@ export default defineConfig({
       link: "https://brianknows.org",
     },
     {
-      text: "v1.0.6",
+      text: "v1.1.6",
       link: "https://www.npmjs.com/package/@brian-ai/langchain",
     },
   ],
@@ -38,6 +38,10 @@ export default defineConfig({
     {
       text: "📕 Guidelines",
       link: "/guidelines",
+    },
+    {
+      text: "📄 Changelog",
+      link: "/changelog",
     },
     {
       text: "🛠️ Toolkits",
@@ -76,12 +80,22 @@ export default defineConfig({
       ],
     },
     {
-      text: "💬 XMTP Support",
-      link: "/xmtp",
-    },
-    {
-      text: "🔷 ENS Support",
-      link: "/ens",
+      text: "🔌 Integrations",
+      collapsed: false,
+      items: [
+        {
+          text: "💬 XMTP",
+          link: "/integrations/xmtp",
+        },
+        {
+          text: "🔷 ENS",
+          link: "/integrations/ens",
+        },
+        {
+          text: "🍦 Gelato",
+          link: "/integrations/gelato",
+        },
+      ],
     },
   ],
 });

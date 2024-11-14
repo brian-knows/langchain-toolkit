@@ -12,24 +12,41 @@ import { BrianToolkit } from "@brian-ai/langchain";
 const { tools } = new BrianToolkit({
   apiKey: "your-brian-api-key",
   privateKeyOrAccount: "your-private-key-or-account",
+  options: { ...brianToolkitOptions },
 });
 
 // import the tools in your langchain agent
 ```
+
+The `brianToolkitOption` object is an object that can contain the following properties:
+
+````typescript
+type BrianToolkitOptions = {
+  gelatoApiKey?: string;
+};
+``
+
+Check the [Gelato Integration](/integrations/gelato) page for more information on how the `gelatoApiKey` option is used.
 
 ## Tools
 
 Every tool inside the `BrianToolkit` is an object of the following class that extends the `DynamicStructuredTool` class from `langchain`:
 
 ```typescript
+type BrianToolOptions = {
+  gelatoApiKey?: string;
+};
+
 class BrianTool extends DynamicStructuredTool {
   brianSDK: BrianSDK;
   account: Account;
+  options?: BrianToolOptions;
 
   constructor(
     fields: DynamicStructuredToolInput & {
       brianSDK: BrianSDK;
       account: Account;
+      options?: BrianToolOptions;
     }
   ) {
     super(fields);
@@ -37,7 +54,7 @@ class BrianTool extends DynamicStructuredTool {
     this.account = fields.account;
   }
 }
-```
+````
 
 Every tool this way has access to the `BrianSDK` instance and to the `Account` instance that are used to interact with the Brian APIs and the wallet respectively.
 

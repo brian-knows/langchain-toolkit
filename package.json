@@ -39,6 +39,7 @@
   "dependencies": {
     "@brian-ai/sdk": "^0.3.1",
     "@coinbase/coinbase-sdk": "^0.10.0",
+    "@gelatonetwork/relay-sdk-viem": "^1.2.0",
     "@langchain/core": "^0.3.17",
     "@langchain/openai": "^0.3.12",
     "@xmtp/message-kit": "^1.1.7-beta.26",

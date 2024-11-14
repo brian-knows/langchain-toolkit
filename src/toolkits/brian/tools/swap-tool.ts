@@ -1,14 +1,8 @@
 import { z } from "zod";
-import { BrianTool } from "./tool.js";
+import { BrianTool, BrianToolOptions } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
-import {
-  createPublicClient,
-  createWalletClient,
-  formatUnits,
-  http,
-  type Account,
-} from "viem";
-import { getChain } from "@/utils";
+import { formatUnits, type Account } from "viem";
+import { executeTransactionSteps } from "./utils.js";
 
 const swapToolSchema = z.object({
   tokenIn: z.string(),
@@ -17,7 +11,11 @@ const swapToolSchema = z.object({
   amount: z.string(),
 });
 
-export const createSwapTool = (brianSDK: BrianSDK, account: Account) => {
+export const createSwapTool = (
+  brianSDK: BrianSDK,
+  account: Account,
+  options?: BrianToolOptions
+) => {
   return new BrianTool({
     name: "swap",
     description:
@@ -25,6 +23,7 @@ export const createSwapTool = (brianSDK: BrianSDK, account: Account) => {
     schema: swapToolSchema,
     brianSDK,
     account,
+    options,
     func: async ({ tokenIn, tokenOut, chain, amount }) => {
       try {
         const prompt = `Swap ${amount} ${tokenIn} for ${tokenOut} on ${chain}`;
@@ -40,56 +39,17 @@ export const createSwapTool = (brianSDK: BrianSDK, account: Account) => {
 
         const [tx] = brianTx;
         const { data } = tx;
-        let lastTxLink = "";
 
         if (data.steps && data.steps.length > 0) {
-          const chainId = data.fromChainId;
-          const network = getChain(chainId!);
-
-          const walletClient = createWalletClient({
+          return await executeTransactionSteps(
+            data,
             account,
-            chain: network,
-            transport: http(),
-          });
-          const publicClient = createPublicClient({
-            chain: network,
-            transport: http(),
-          });
-
-          for (const step of data.steps) {
-            if (step.chainId !== walletClient.chain.id) {
-              // change chain
-              await walletClient.switchChain({ id: step.chainId });
-            }
-
-            const txHash = await walletClient.sendTransaction({
-              from: step.from,
-              to: step.to,
-              value: BigInt(step.value),
-              data: step.data,
-              chainId: step.chainId,
-            });
-
-            console.log(
-              `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
-            );
-
-            const { transactionHash } =
-              await publicClient.waitForTransactionReceipt({
-                hash: txHash,
-              });
-
-            console.log(
-              `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
-            );
-
-            lastTxLink = `${network.blockExplorers?.default.url}/tx/${transactionHash}`;
-          }
-
-          return `Swap executed successfully between ${amount} of ${tokenIn} and ${formatUnits(
-            BigInt(data.toAmountMin!),
-            data.toToken?.decimals || 18
-          )} of ${tokenOut} on ${chain}. You can check the transaction here: ${lastTxLink}`;
+            `Swap executed successfully between ${amount} of ${tokenIn} and ${formatUnits(
+              BigInt(data.toAmountMin!),
+              data.toToken?.decimals || 18
+            )} of ${tokenOut} on ${chain}.`,
+            options
+          );
         }
 
         return "No transaction to be executed from this prompt. Maybe you should try with another one?";

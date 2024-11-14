@@ -1,13 +1,8 @@
 import { z } from "zod";
-import { BrianTool } from "./tool.js";
+import { BrianTool, BrianToolOptions } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
-import {
-  createPublicClient,
-  createWalletClient,
-  http,
-  type Account,
-} from "viem";
-import { getChain } from "@/utils";
+import { type Account } from "viem";
+import { executeTransactionSteps } from "./utils.js";
 
 const withdrawToolSchema = z.object({
   tokenIn: z.string(),
@@ -16,7 +11,11 @@ const withdrawToolSchema = z.object({
   protocol: z.string(),
 });
 
-export const createWithdrawTool = (brianSDK: BrianSDK, account: Account) => {
+export const createWithdrawTool = (
+  brianSDK: BrianSDK,
+  account: Account,
+  options?: BrianToolOptions
+) => {
   return new BrianTool({
     name: "withdraw",
     description:
@@ -24,6 +23,7 @@ export const createWithdrawTool = (brianSDK: BrianSDK, account: Account) => {
     schema: withdrawToolSchema,
     brianSDK,
     account,
+    options,
     func: async ({ tokenIn, amount, protocol, chain }) => {
       const prompt = `Withdraw ${amount} ${tokenIn} on ${protocol} on ${chain}`;
 
@@ -41,48 +41,12 @@ export const createWithdrawTool = (brianSDK: BrianSDK, account: Account) => {
       let lastTxLink = "";
 
       if (data.steps && data.steps.length > 0) {
-        const chainId = data.fromChainId;
-        const network = getChain(chainId!);
-
-        const walletClient = createWalletClient({
+        return await executeTransactionSteps(
+          data,
           account,
-          chain: network,
-          transport: http(),
-        });
-        const publicClient = createPublicClient({
-          chain: network,
-          transport: http(),
-        });
-
-        for (const step of data.steps) {
-          if (step.chainId !== walletClient.chain.id) {
-            // change chain
-            await walletClient.switchChain({ id: step.chainId });
-          }
-
-          const txHash = await walletClient.sendTransaction({
-            from: step.from,
-            to: step.to,
-            value: BigInt(step.value),
-            data: step.data,
-            chainId: step.chainId,
-          });
-
-          console.log(
-            `Transaction executed, tx hash: ${txHash} -- waiting for confirmation.`
-          );
-
-          const { transactionHash } =
-            await publicClient.waitForTransactionReceipt({
-              hash: txHash,
-            });
-
-          console.log(
-            `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${transactionHash}`
-          );
-          lastTxLink = `${network.blockExplorers?.default.url}/tx/${transactionHash}`;
-        }
-        return `Withdraw executed successfully! I've withdrawn ${amount} of ${tokenIn} on ${protocol} on ${chain}. You can check the transaction here: ${lastTxLink}`;
+          `Withdraw executed successfully! I've withdrawn ${amount} of ${tokenIn} on ${protocol} on ${chain}.`,
+          options
+        );
       }
 
       return "No transaction to be executed from this prompt. Maybe you should try with another one?";

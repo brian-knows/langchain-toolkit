@@ -12,11 +12,13 @@ import {
   createTransferTool,
   createWithdrawTool,
 } from "./tools";
+import { BrianToolOptions } from "./tools/tool";
 
 export type BrianToolkitOptions = {
   apiKey: string;
   privateKeyOrAccount: Hex | Account;
   apiUrl?: string;
+  options?: BrianToolOptions;
 };
 
 export class BrianToolkit extends BaseToolkit {
@@ -24,7 +26,12 @@ export class BrianToolkit extends BaseToolkit {
   brianSDK: BrianSDK;
   tools: ToolInterface[];
 
-  constructor({ apiKey, apiUrl, privateKeyOrAccount }: BrianToolkitOptions) {
+  constructor({
+    apiKey,
+    apiUrl,
+    privateKeyOrAccount,
+    options,
+  }: BrianToolkitOptions) {
     super();
 
     if (typeof privateKeyOrAccount === "string") {
@@ -36,13 +43,13 @@ export class BrianToolkit extends BaseToolkit {
     this.brianSDK = new BrianSDK({ apiKey, apiUrl });
     this.tools = [
       //createParametersExtractionTool(this.brianSDK, this.account),
-      createSwapTool(this.brianSDK, this.account),
-      createBridgeTool(this.brianSDK, this.account),
-      createDepositTool(this.brianSDK, this.account),
-      createWithdrawTool(this.brianSDK, this.account),
-      createBorrowTool(this.brianSDK, this.account),
-      createRepayTool(this.brianSDK, this.account),
-      createTransferTool(this.brianSDK, this.account),
+      createSwapTool(this.brianSDK, this.account, options),
+      createBridgeTool(this.brianSDK, this.account, options),
+      createDepositTool(this.brianSDK, this.account, options),
+      createWithdrawTool(this.brianSDK, this.account, options),
+      createBorrowTool(this.brianSDK, this.account, options),
+      createRepayTool(this.brianSDK, this.account, options),
+      createTransferTool(this.brianSDK, this.account, options),
       createGetBalanceTool(this.brianSDK, this.account),
     ];
   }
