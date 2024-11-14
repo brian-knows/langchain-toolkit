@@ -11,3 +11,4 @@ tsconfig.json
 tsup.config.ts
 jest.config.ts
 bun.lockb
+docs/
