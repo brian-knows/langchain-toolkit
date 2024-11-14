@@ -20,11 +20,11 @@ const { tools } = new BrianToolkit({
 
 The `brianToolkitOption` object is an object that can contain the following properties:
 
-````typescript
+```typescript
 type BrianToolkitOptions = {
   gelatoApiKey?: string;
 };
-``
+```
 
 Check the [Gelato Integration](/integrations/gelato) page for more information on how the `gelatoApiKey` option is used.
 
@@ -54,7 +54,7 @@ class BrianTool extends DynamicStructuredTool {
     this.account = fields.account;
   }
 }
-````
+```
 
 Every tool this way has access to the `BrianSDK` instance and to the `Account` instance that are used to interact with the Brian APIs and the wallet respectively.
 
