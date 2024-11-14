@@ -20,6 +20,9 @@ describe("@brian-ai/langchain tests", async () => {
     apiKey: BRIAN_API_KEY,
     privateKeyOrAccount: PRIVATE_KEY as `0x${string}`,
     llm: new ChatOpenAI(),
+    options: {
+      gelatoApiKey: process.env.GELATO_API_KEY,
+    },
   });
 
   test(

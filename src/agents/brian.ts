@@ -23,11 +23,13 @@ export const createBrianAgent = async ({
   llm,
   xmtpHandler,
   xmtpHandlerOptions,
+  options,
 }: BrianAgentOptions) => {
   const { tools } = new BrianToolkit({
     apiKey,
     apiUrl,
     privateKeyOrAccount,
+    options,
   });
 
   const prompt = ChatPromptTemplate.fromMessages([
