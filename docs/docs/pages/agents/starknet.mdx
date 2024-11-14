@@ -1,5 +1,32 @@
 # Starknet Agent
 
-:::warning
-⚠️ This page is still under construction. ⚠️
-:::
+The `BrianStarknetAgent` is a `langchain` agent that leverages the Brian APIs and execute operations on the provided wallet on Starknet.
+
+## Usage
+
+Creating a `BrianStarknetAgent` takes literally few lines of code:
+
+```typescript
+import { createBrianStarknetAgent } from "@brian-ai/agent";
+import { ChatOpenAI } from "@langchain/openai";
+
+const agent = await createBrianStarknetAgent({
+  apiKey: "your-brian-api-key",
+  account: starknetAccount, // type Account from "starknet"
+  llm: new ChatOpenAI(),
+});
+```
+
+## Invoking the agent
+
+Once the agent is created, you can invoke it with a given input:
+
+```typescript
+const response = await agent.invoke({
+  input: "Transfer 10 STRK to 0x0706e259b99e7a2f...",
+});
+```
+
+## Starknet Agent toolkit
+
+The `BrianStarknetAgent` has a set of tools that can be used to interact with the Brian APIs. Please refer to the [Starknet Toolkit](/toolkits/starknet) for more information.

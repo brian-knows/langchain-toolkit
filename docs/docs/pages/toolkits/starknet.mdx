@@ -1,5 +1,84 @@
 # Starknet Toolkit
 
-:::warning
-⚠️ This page is still under construction. ⚠️
+The `BrianStarknetToolkit` is a `langchain` toolkit that can be imported in your agent to interact with the Brian APIs and execute operations with a wallet on Starknet.
+
+## Usage
+
+You can import directly the `BrianStarknetToolkit` in your agent without the need of using the `createBrianStarknetAgent` function:
+
+```typescript
+import { BrianStarknetToolkit } from "@brian-ai/langchain";
+
+const { tools } = new BrianStarknetToolkit({
+  apiKey: "your-brian-api-key",
+  account: starknetAccount, // type Account from "starknet"
+  options: { ...brianToolkitOptions },
+});
+
+// import the tools in your langchain agent
+```
+
+## Tools
+
+Every tool inside the `BrianStarknetTool` is an object of the following class that extends the `DynamicStructuredTool` class from `langchain`:
+
+```typescript
+class BrianStarknetTool extends DynamicStructuredTool {
+  brianSDK: BrianSDK;
+  account: Account;
+
+  constructor(
+    fields: DynamicStructuredToolInput & {
+      brianSDK: BrianSDK;
+      account: Account;
+    }
+  ) {
+    super(fields);
+    this.brianSDK = fields.brianSDK;
+    this.account = fields.account;
+  }
+}
+```
+
+Every tool this way has access to the `BrianSDK` instance and to the `Account` instance that are used to interact with the Brian APIs and the wallet on Starknet respectively.
+
+These are all the tools currently supported by the toolkit.
+
+:::danger
+**We do not encourage the use of the tools directly, but rather the import of the whole `BrianStarknetToolkit` or using the `BrianStarknetAgent` directly.**
 :::
+
+### Balance tool
+
+The **balance** tool is a tool that allows the agent to retrieve the balance of a native/ERC-20 token of a given wallet.
+
+```typescript
+await balanceTool.invoke({
+  token: "STRK",
+  address: "0x0706e259b99e7a...",
+});
+```
+
+### Swap tool
+
+The **swap** tool is a tool that allows the agent to swap a native/ERC-20 token for another native/ERC-20 token on Starknet.
+
+```typescript
+await swapTool.invoke({
+  tokenIn: "STRK",
+  tokenOut: "ETH",
+  amount: 100,
+});
+```
+
+### Transfer tool
+
+The **transfer** tool is a tool that allows the agent to transfer a native/ERC-20 token to another wallet on Starknet.
+
+```typescript
+await transferTool.invoke({
+  token: "STRK",
+  receiver: "0x0706e259b99e7a...",
+  amount: 100,
+});
+```

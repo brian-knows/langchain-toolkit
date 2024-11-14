@@ -7,7 +7,6 @@ import { Account } from "starknet";
 const swapToolSchema = z.object({
   tokenIn: z.string(),
   tokenOut: z.string(),
-  chain: z.string(),
   amount: z.string(),
 });
 
@@ -21,7 +20,7 @@ export const createStarknetSwapTool = (
     schema: swapToolSchema,
     brianSDK,
     account,
-    func: async ({ tokenIn, tokenOut, chain, amount }) => {
+    func: async ({ tokenIn, tokenOut, amount }) => {
       try {
         const prompt = `Swap ${amount} ${tokenIn} for ${tokenOut} on Starknet`;
 
@@ -61,7 +60,7 @@ export const createStarknetSwapTool = (
           return `Swap executed successfully between ${amount} of ${tokenIn} and ${formatUnits(
             BigInt(data.toAmountMin!),
             data.toToken?.decimals || 18
-          )} of ${tokenOut} on ${chain}. You can check the transaction here: ${lastTxLink}`;
+          )} of ${tokenOut} on Starknet. You can check the transaction here: ${lastTxLink}`;
         }
 
         return "No transaction to be executed from this prompt. Maybe you should try with another one?";
@@ -69,7 +68,6 @@ export const createStarknetSwapTool = (
         return `Calling tool with arguments:\n\n${JSON.stringify({
           tokenIn,
           tokenOut,
-          chain,
           amount,
         })}\n\nraised the following error:\n\n${error}`;
       }
