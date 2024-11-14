@@ -1,10 +1,10 @@
 # CDP Toolkit
 
-The `CDPToolkit` is a `langchain` toolkit that can be imported in your agent to interact with the Brian APIs and execute operations on a Coinbase MPC-wallet.
+The `BrianCDPToolkit` is a `langchain` toolkit that can be imported in your agent to interact with the Brian APIs and execute operations on a Coinbase MPC-wallet.
 
 ## Usage
 
-You can import directly the `CDPToolkit` in your agent without the need of using the `createBrianCDPAgent` function:
+You can import directly the `BrianCDPToolkit` in your agent without the need of using the `createBrianCDPAgent` function:
 
 ```typescript
 import { BrianCDPToolkit } from "@brian-ai/langchain";
@@ -29,7 +29,7 @@ const { tools } = await brianCDPToolkit.setup({ walletData });
 
 ## Tools
 
-Every tool inside the `CDPToolkit` is an object of the following class that extends the `DynamicStructuredTool` class from `langchain`:
+Every tool inside the `BrianCDPToolkit` is an object of the following class that extends the `DynamicStructuredTool` class from `langchain`:
 
 ```typescript
 class BrianCDPTool extends DynamicStructuredTool {

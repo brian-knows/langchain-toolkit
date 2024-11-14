@@ -1,10 +1,10 @@
 # CDP Agent
 
-The `CDPAgent` is a `langchain` agent that leverages the Brian APIs and execute operations on the provided Coinbase MPC-wallet.
+The `BrianCDPAgent` is a `langchain` agent that leverages the Brian APIs and execute operations on the provided Coinbase MPC-wallet.
 
 ## Usage
 
-Creating a `CDPAgent` takes few lines of code:
+Creating a `BrianCDPAgent` takes few lines of code:
 
 ```typescript
 import { createBrianAgent } from "@brian-ai/langchain";
@@ -32,4 +32,4 @@ const response = await agent.invoke({
 
 ## CDP Agent Toolkit
 
-The `CDPAgent` has a set of tools that can be used to interact with the Brian APIs. Please refer to the [CDP Toolkit](/toolkits/cdp) for more information.
+The `BrianCDPAgent` has a set of tools that can be used to interact with the Brian APIs. Please refer to the [CDP Toolkit](/toolkits/cdp) for more information.
