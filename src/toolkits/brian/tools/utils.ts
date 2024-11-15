@@ -7,6 +7,21 @@ import {
   GelatoRelay,
 } from "@gelatonetwork/relay-sdk-viem";
 
+export const getChainAndClients = (account: Account, chainId: number) => {
+  const network = getChain(chainId);
+  const walletClient = createWalletClient({
+    account,
+    chain: network,
+    transport: http(),
+  });
+  const publicClient = createPublicClient({
+    chain: network,
+    transport: http(),
+  });
+
+  return { network, walletClient, publicClient };
+};
+
 export const executeTransactionSteps = async (
   data: TransactionData,
   account: Account,
@@ -14,7 +29,10 @@ export const executeTransactionSteps = async (
   options?: BrianToolOptions
 ) => {
   const chainId = data.fromChainId;
-  const network = getChain(chainId!);
+  const { network, walletClient, publicClient } = getChainAndClients(
+    account,
+    chainId!
+  );
   if (options?.gelatoApiKey) {
     let lastTxLink = "";
 
@@ -45,16 +63,6 @@ export const executeTransactionSteps = async (
     return `${successMessage} - You can check the transaction here: ${lastTxLink}`;
   } else {
     let lastTxLink = "";
-
-    const walletClient = createWalletClient({
-      account,
-      chain: network,
-      transport: http(),
-    });
-    const publicClient = createPublicClient({
-      chain: network,
-      transport: http(),
-    });
 
     for (const step of data.steps!) {
       if (step.chainId !== walletClient.chain.id) {

@@ -1,8 +1,15 @@
 import { BrianSDK } from "@brian-ai/sdk";
-import { Account, createPublicClient, createWalletClient, http } from "viem";
+import {
+  Account,
+  createPublicClient,
+  createWalletClient,
+  Hex,
+  http,
+} from "viem";
 import { z } from "zod";
 import { BrianTool, BrianToolOptions } from "./tool";
 import { getChain } from "@/utils";
+import ky from "ky";
 
 const deployTokenToolSchema = z.object({
   name: z.string(),
@@ -28,11 +35,20 @@ export const createDeployTokenTool = (
       try {
         const deployPrompt = `Deploy an ERC-20 token with name ${name}, symbol ${symbol} and total supply ${totalSupply}`;
 
-        const { abi, bytecode } = await brianSDK.generateCode({
-          prompt: deployPrompt,
-          compile: true,
-          context: [],
+        const apiResult = await ky.post<{
+          result: { abi: any; bytecode: Hex };
+        }>("https://api.brianknows.org/api/v0/agent/smart-contract", {
+          headers: {
+            "Content-Type": "application/json",
+            "x-brian-api-key": process.env.BRIAN_API_KEY,
+          },
+          json: {
+            prompt: deployPrompt,
+            compile: true,
+          },
         });
+        const { result } = await apiResult.json();
+        const { abi, bytecode } = result;
 
         const network = getChain(chainId);
 
@@ -56,7 +72,7 @@ export const createDeployTokenTool = (
           `Deploy contract executed, tx hash: ${deployTxHash} -- waiting for confirmation.`
         );
 
-        await publicClient.waitForTransactionReceipt({
+        const receipt = await publicClient.waitForTransactionReceipt({
           hash: deployTxHash,
         });
 
@@ -64,7 +80,7 @@ export const createDeployTokenTool = (
           `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${deployTxHash}`
         );
 
-        return `Smart contract deployed successfully! I've created the token ${name} with symbol ${symbol} and ${totalSupply} total supply - You can check the transaction here: ${network.blockExplorers?.default.url}/tx/${deployTxHash}`;
+        return `Smart contract deployed successfully! I've created the token ${name} with symbol ${symbol} and ${totalSupply} total supply at this address: ${receipt.contractAddress} - You can check the transaction here: ${network.blockExplorers?.default.url}/tx/${deployTxHash}`;
       } catch (error) {
         console.error(error);
         return `Calling deploy token tool with arguments:\n\n${JSON.stringify({

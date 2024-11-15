@@ -1,6 +1,7 @@
 export * from "./balance-tool.js";
 export * from "./borrow-tool.js";
 export * from "./bridge-tool.js";
+export * from "./create-pool-tool.js";
 export * from "./deploy-token-tool.js";
 export * from "./deploy-nft-tool.js";
 export * from "./deposit-tool.js";

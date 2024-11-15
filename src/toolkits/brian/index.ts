@@ -5,6 +5,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import {
   createBorrowTool,
   createBridgeTool,
+  createCreatePoolTool,
   createDeployNFTTool,
   createDeployTokenTool,
   createDepositTool,
@@ -57,6 +58,7 @@ export class BrianToolkit extends BaseToolkit {
       createGetNetworksToolSchema(this.brianSDK, this.account),
       createDeployTokenTool(this.brianSDK, this.account, options),
       createDeployNFTTool(this.brianSDK, this.account, options),
+      createCreatePoolTool(this.brianSDK, this.account),
     ];
   }
 }
