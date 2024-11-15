@@ -15,20 +15,25 @@ import {
 } from "@uniswap/v3-sdk";
 import { UNISWAP_V3_POOL_ABI } from "@/abis/uniswap-v3-pool";
 import { NON_FUNGIBLE_POSITION_MANAGER_ABI } from "@/abis/uniswap-v3-position-manager";
-import { WETH_ABI } from "@/toolkits/cdp/tools/utils";
 
 const getNonFungiblePositionManagerContractAddress = (
   chainId: number
 ): Hex | null => {
-  if ([1, 10, 137, 8453, 42161].includes(chainId)) {
+  if ([1, 10, 137, 42161].includes(chainId)) {
     return "0xC36442b4a4522E871399CD717aBDD847Ab11FE88";
+  }
+  if (chainId === 8453) {
+    return "0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1";
   }
   return null;
 };
 
 const getFactoryAddress = (chainId: number): Hex | null => {
-  if ([1, 10, 137, 8453, 42161].includes(chainId)) {
+  if ([1, 10, 137, 42161].includes(chainId)) {
     return "0x1F98431c8aD98523631AE4a59f267346ea31F984";
+  }
+  if (chainId === 8453) {
+    return "0x33128a8fC17869897dcE68Ed026d694621f6FDfD";
   }
   return null;
 };
@@ -122,20 +127,6 @@ export const createCreatePoolTool = (brianSDK: BrianSDK, account: Account) => {
           );
         }
 
-        const wrapTx = await walletClient.writeContract({
-          address: wethAddress,
-          functionName: "deposit",
-          abi: WETH_ABI,
-          args: [],
-          value: parseUnits(ethAmount.toString(), 18),
-        });
-
-        console.log(`Wrapping ETH to WETH...`);
-
-        await publicClient.waitForTransactionReceipt({ hash: wrapTx });
-
-        console.log(`${ethAmount} ETH successfully wrapped to WETH.`);
-
         const wethAllowance = await publicClient.readContract({
           abi: erc20Abi,
           address: wethAddress,
@@ -144,6 +135,20 @@ export const createCreatePoolTool = (brianSDK: BrianSDK, account: Account) => {
         });
 
         if (wethAllowance < parseUnits(ethAmount.toString(), 18)) {
+          // const wrapTx = await walletClient.writeContract({
+          //   address: wethAddress,
+          //   functionName: "deposit",
+          //   abi: WETH_ABI,
+          //   args: [],
+          //   value: parseUnits(ethAmount.toString(), 18),
+          // });
+
+          // console.log(`Wrapping ETH to WETH...`);
+
+          // await publicClient.waitForTransactionReceipt({ hash: wrapTx });
+
+          // console.log(`${ethAmount} ETH successfully wrapped to WETH.`);
+
           const approveWethTx = await walletClient.writeContract({
             abi: erc20Abi,
             address: wethAddress as `0x${string}`,
@@ -165,13 +170,25 @@ export const createCreatePoolTool = (brianSDK: BrianSDK, account: Account) => {
           );
         }
 
-        const token1: Token = new Token(chainId, tokenAddress, tokenDecimals);
-        const token2: Token = new Token(chainId, wethAddress, 18);
+        let token1: Token;
+        let token2: Token;
+        let sqrtPrice: bigint;
+
+        if (tokenAddress < wethAddress) {
+          token1 = new Token(chainId, tokenAddress, tokenDecimals);
+          token2 = new Token(chainId, wethAddress, 18);
+          sqrtPrice = BigInt(Math.sqrt(ethAmount / tokenAmount) * 2 ** 96);
+        } else {
+          token1 = new Token(chainId, wethAddress, 18);
+          token2 = new Token(chainId, tokenAddress, tokenDecimals);
+          sqrtPrice = BigInt(Math.sqrt(tokenAmount / ethAmount) * 2 ** 96);
+        }
+
         const poolFee: FeeAmount = FeeAmount.LOW_300;
         const poolFactoryAddress = getFactoryAddress(chainId);
 
         if (!poolFactoryAddress) {
-          return `Uniswap or Aerodrome is not deployed on chain with id ${chainId}, maybe try with another one?`;
+          return `Uniswap is not deployed on chain with id ${chainId}, maybe try with another one?`;
         }
 
         const createPoolTx = await walletClient.writeContract({
@@ -182,16 +199,21 @@ export const createCreatePoolTool = (brianSDK: BrianSDK, account: Account) => {
             token1.address as `0x${string}`,
             token2.address as `0x${string}`,
             poolFee,
-            BigInt(Math.sqrt(ethAmount / tokenAmount) * 2 ** 96),
+            sqrtPrice,
           ],
-          //value: parseUnits(ethAmount.toString(), 18),
         });
 
         console.log(
           `Creating a pool using ${tokenAddress} and ${wethAddress} on ${chainId}.`
         );
 
-        await publicClient.waitForTransactionReceipt({ hash: createPoolTx });
+        await publicClient.waitForTransactionReceipt({
+          hash: createPoolTx,
+        });
+
+        console.log(
+          `Pool successfully created - Transaction link: transaction here: ${network.blockExplorers?.default.url}/tx/${createPoolTx}`
+        );
 
         const currentPoolAddress = computePoolAddress({
           factoryAddress: poolFactoryAddress,
