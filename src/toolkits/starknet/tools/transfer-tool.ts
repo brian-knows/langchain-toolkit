@@ -38,9 +38,7 @@ export const createStarknetTransferTool = (
 
       if (data.steps && data.steps.length > 0) {
         for (const step of data.steps) {
-          const { transaction_hash } = await account.execute(
-            (step as any)[Object.keys(step)[0]]
-          );
+          const { transaction_hash } = await account.execute(step as any);
 
           console.log(
             `Transaction executed, tx hash: ${transaction_hash} -- waiting for confirmation.`
