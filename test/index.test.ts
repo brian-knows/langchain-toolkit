@@ -1,5 +1,5 @@
-import { describe, test } from "@jest/globals";
 import "dotenv/config";
+import { describe, test } from "@jest/globals";
 import { createBrianAgent } from "../src";
 import { ChatOpenAI } from "@langchain/openai";
 
