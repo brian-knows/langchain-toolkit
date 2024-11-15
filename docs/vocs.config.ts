@@ -11,7 +11,7 @@ export default defineConfig({
       link: "https://brianknows.org",
     },
     {
-      text: "v1.2.2",
+      text: "v1.2.3",
       link: "https://www.npmjs.com/package/@brian-ai/langchain",
     },
   ],
