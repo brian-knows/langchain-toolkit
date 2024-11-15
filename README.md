@@ -24,7 +24,7 @@ npm install @brian-ai/langchain
 ## 🚀 Quick Start
 
 ```typescript
-import { createBrianAgent } from "@brian-ai/agent";
+import { createBrianAgent } from "@brian-ai/langchain";
 import { ChatOpenAI } from "@langchain/openai";
 
 const agent = await createBrianAgent({
