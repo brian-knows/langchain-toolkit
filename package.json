@@ -1,6 +1,6 @@
 {
   "name": "@brian-ai/langchain",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Repository containing the LangchainJS toolkit for creating powerful web3 agents.",
   "repository": {
     "url": "git+https://github.com/brian-knows/langchain-toolkit"
