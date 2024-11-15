@@ -54,7 +54,7 @@ export const createSwapTool = (
 
         return "No transaction to be executed from this prompt. Maybe you should try with another one?";
       } catch (error) {
-        return `Calling tool with arguments:\n\n${JSON.stringify({
+        return `Calling swap tool with arguments:\n\n${JSON.stringify({
           tokenIn,
           tokenOut,
           chain,

@@ -101,6 +101,32 @@ await bridgeTool.invoke({
 });
 ```
 
+### Deploy NFT tool
+
+The **deploy NFT** tool is a tool that allows the agent to deploy a new NFT Smart Contract on a given chain (via chainId).
+
+```typescript
+await deployNFTTool.invoke({
+  chainId: 1,
+  name: "BrianNFT",
+  symbol: "BNFT",
+  baseURI: "https://brianknows.org",
+});
+```
+
+### Deploy Token tool
+
+The **deploy token** token is a tool that allows the agent to deploy a new ERC-20 token on a given chain (via chainId).
+
+```typescript
+await deployTokenTool.invoke({
+  chainId: 1,
+  name: "BrianToken",
+  symbol: "BRT",
+  totalSupply: 10000000,
+});
+```
+
 ### Deposit tool
 
 The **deposit** tool is a tool that allows the agent to deposit a given amount of a token inside a protocol.
@@ -112,6 +138,14 @@ await depositTool.invoke({
   amount: 100,
   protocol: "AAVE",
 });
+```
+
+### Networks tool
+
+The **networks** tool is a utility tool that allows the agent to retrieve all the networks supported by Brian, alongside with their chain ID.
+
+```typescript
+await networksTool.invoke();
 ```
 
 ### Repay tool
