@@ -10,4 +10,5 @@ export * from "./parameters-extraction-tool.js";
 export * from "./repay-tool.js";
 export * from "./swap-tool.js";
 export * from "./transfer-tool.js";
+export * from "./wallet-tool.js";
 export * from "./withdraw-tool.js";

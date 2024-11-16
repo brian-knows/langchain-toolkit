@@ -3,20 +3,20 @@ import { Account } from "viem";
 import { z } from "zod";
 import { BrianTool } from "./tool";
 
-const getNetworksToolSchema = z.object({});
+const getNetworksToolSchema = z.object({
+  chain: z.string(),
+});
 
-export const createGetNetworksToolSchema = (
-  brianSDK: BrianSDK,
-  account: Account
-) => {
+export const createGetNetworksTool = (brianSDK: BrianSDK, account: Account) => {
   return new BrianTool({
     name: "get_networks",
     description:
-      "gets all the networks available. useful for mapping a chain name to its chainId.",
+      "you should use this tool whenever you need to get the chainId of a network from its name.",
     schema: getNetworksToolSchema,
     brianSDK,
     account,
-    func: async () => {
+    func: async ({ chain }) => {
+      console.log("using networks");
       const networks = await brianSDK.getNetworks();
 
       return `These are all the supported networks:\n\n${networks.map(

@@ -304,7 +304,6 @@ export const createCreatePoolTool = (brianSDK: BrianSDK, account: Account) => {
 
         return `Liquidity pool created successfully! I've added ${tokenAmount} ${tokenAddress} and ${ethAmount} ETH to the pool at this address: ${currentPoolAddress} - You can check the transaction here: ${network.blockExplorers?.default.url}/tx/${createPositionTx}`;
       } catch (error) {
-        console.error(error);
         return `Calling create pool tool with arguments:\n\n${JSON.stringify({
           tokenAddress,
           tokenAmount,

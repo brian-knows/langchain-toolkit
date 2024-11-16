@@ -82,7 +82,6 @@ export const createDeployNFTTool = (
 
         return `Smart contract deployed successfully! I've created the token ${name} with symbol ${symbol} and ${baseURI} base URI at this address ${receipt.contractAddress} - You can check the transaction here: ${network.blockExplorers?.default.url}/tx/${deployTxHash}`;
       } catch (error) {
-        console.error(error);
         return `Calling deploy token tool with arguments:\n\n${JSON.stringify({
           name,
           symbol,

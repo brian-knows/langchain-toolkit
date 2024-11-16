@@ -10,7 +10,8 @@ import {
   createDeployTokenTool,
   createDepositTool,
   createGetBalanceTool,
-  createGetNetworksToolSchema,
+  createGetNetworksTool,
+  createGetWalletTool,
   createRepayTool,
   createSwapTool,
   createTransferTool,
@@ -55,10 +56,11 @@ export class BrianToolkit extends BaseToolkit {
       createRepayTool(this.brianSDK, this.account, options),
       createTransferTool(this.brianSDK, this.account, options),
       createGetBalanceTool(this.brianSDK, this.account),
-      createGetNetworksToolSchema(this.brianSDK, this.account),
+      createGetNetworksTool(this.brianSDK, this.account),
       createDeployTokenTool(this.brianSDK, this.account, options),
       createDeployNFTTool(this.brianSDK, this.account, options),
       createCreatePoolTool(this.brianSDK, this.account),
+      createGetWalletTool(this.brianSDK, this.account),
     ];
   }
 }
