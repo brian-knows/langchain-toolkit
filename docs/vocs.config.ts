@@ -44,6 +44,28 @@ export default defineConfig({
       link: "/changelog",
     },
     {
+      text: "📚 Guides",
+      collapsed: false,
+      items: [
+        {
+          text: "Create your first agent",
+          link: "/guides/create-agent",
+        },
+        {
+          text: "Interact with your agent",
+          link: "/guides/interact-agent",
+        },
+        {
+          text: "Add memory",
+          link: "/guides/add-memory-agent",
+        },
+        {
+          text: "Agent deployment",
+          link: "/guides/deploy-agent",
+        },
+      ],
+    },
+    {
       text: "🛠️ Toolkits",
       collapsed: false,
       items: [
