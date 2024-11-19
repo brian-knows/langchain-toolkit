@@ -20,13 +20,15 @@ describe("@brian-ai/langchain tests", async () => {
     apiKey: BRIAN_API_KEY,
     privateKeyOrAccount: PRIVATE_KEY as `0x${string}`,
     llm: new ChatOpenAI(),
+    instructions:
+      "You are an helpful web3 assistant. You speak in first person when a user asks something about you.",
   });
 
   test(
     "it should swap two tokens",
     async () => {
       const res = await brianAgent.invoke({
-        input: "What is the ETH balance of orbulo.eth on Base?",
+        input: "What are the tokens you own on Optimism?",
       });
       console.log(res.output);
     },
