@@ -1,0 +1,45 @@
+# Farcaster Memory Store
+
+The Fastercaster Memory Vector Store stores the casts of a given **fid** in memory.
+
+This vector store can be useful to give context to an agent about his pasts casts, or to make him act like an existing user on Farcaster.
+
+## Usage
+
+In order to use the Farcaster Memory Vector Store, you need to pass a valid `fid` and a `NEYNAR_API_KEY` for fetching the casts from Farcaster.
+
+```typescript
+import { createFarcasterMemoryVectorStore } from "@brian-ai/langchain";
+
+const farcasterMemoryVectorStore = await createFarcasterMemoryVectorStore({
+  fid: process.env.FID,
+  neynarApiKey: process.env.NEYNAR_API_KEY,
+});
+```
+
+### Query the store
+
+You can use the `similaritySearch` method on the vector store to retrieve the most similar casts to a given text.
+
+```typescript
+const similarCasts = await memoryStore.similaritySearch(
+  "Brian is such an awesome project!"
+);
+```
+
+### Retriever
+
+Most of the times, you want to use this store as a `retriever` for easier usage in your chains.
+
+```typescript
+const retriever = memoryStore.asRetriever({
+  // optional filter
+  filter,
+  k: 2, // number of casts to retrieve
+});
+await retriever.invoke("Brian is such an awesome project!");
+```
+
+## More complex stores
+
+In case you need a store with persisting, and the capability of filtering for metadata for example, you can check the [Farcaster Supabase Store](/vector-stores/farcaster-supabase-store).

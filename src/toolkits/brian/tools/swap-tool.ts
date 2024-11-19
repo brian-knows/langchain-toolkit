@@ -2,7 +2,7 @@ import { z } from "zod";
 import { BrianTool, BrianToolOptions } from "./tool.js";
 import { BrianSDK } from "@brian-ai/sdk";
 import { formatUnits, type Account } from "viem";
-import { executeTransactionSteps } from "./utils.js";
+import { executeTransactionSteps } from "./utils";
 
 const swapToolSchema = z.object({
   tokenIn: z.string(),

@@ -1,0 +1,19 @@
+# What are Vector Stores?
+
+Vector stores are specialized data stores that enable indexing and retrieving information based on vector representations.
+
+The vectors they store are called **embeddings**, and capture the semantic meaning of data that has been embedded.
+
+Vector stores are frequently used to search over unstructured data, such as text, images, and audio, to retrieve relevant information based on semantic similarity rather than exact keyword matches.
+
+![Image provided by LangChain](https://js.langchain.com/assets/images/vectorstores-2540b4bc355b966c99b0f02cfdddb273.png)
+
+Learn more about vector stores and embeddings in the [Langchain documentation](https://js.langchain.com/docs/concepts/vectorstores).
+
+## Available Vector Stores
+
+This is a list of the currently available vector stores:
+
+- [x] [Farcaster Memory Vector Store](/docs/pages/vector-stores/farcaster/memory-store) - stores the casts of a given **fid** in memory;
+- [x] [Farcaster Supabase Vector Store](/docs/pages/vector-stores/farcaster/supabase-store) - stores the casts of a given **fid** in a Supabase database;
+- [ ] Twitter Memory Vector Store: coming soon.

@@ -1,0 +1,125 @@
+# Farcaster Supabase Store
+
+The Fastercaster Supabase Vector Store stores the casts of a given **fid** in your Supabase DB.
+
+This vector store can be useful to give context to an agent about his pasts casts, or to make him act like an existing user on Farcaster.
+
+## Usage
+
+In order to use the Farcaster Database Vector Store, you need to pass a valid `fid`, a `NEYNAR_API_KEY` for fetching the casts from Farcaster, a `SUPABASE_API_KEY` and `SUPABASE_URL` to interact with your database.
+
+### Before you start
+
+Before you start using this store, you need to create a database on Supabase and run the following SQL to setup `pgvector` and create the necessary tables and functions:
+
+```SQL
+-- Enable the pgvector extension to work with embedding vectors
+create extension vector;
+
+-- Create a table to store your documents
+create table documents (
+  id bigserial primary key,
+  content text, -- corresponds to Document.pageContent
+  metadata jsonb, -- corresponds to Document.metadata
+  embedding vector(1536) -- 1536 works for OpenAI embeddings, the only available right now for this package
+);
+
+-- Create a function to search for documents
+create function match_documents (
+  query_embedding vector(1536),
+  match_count int DEFAULT null,
+  filter jsonb DEFAULT '{}'
+) returns table (
+  id bigint,
+  content text,
+  metadata jsonb,
+  embedding jsonb,
+  similarity float
+)
+language plpgsql
+as $$
+#variable_conflict use_column
+begin
+  return query
+  select
+    id,
+    content,
+    metadata,
+    (embedding::text)::jsonb as embedding,
+    1 - (documents.embedding <=> query_embedding) as similarity
+  from documents
+  where metadata @> filter
+  order by documents.embedding <=> query_embedding
+  limit match_count;
+end;
+$$;
+```
+
+### Using the store
+
+```typescript
+import { createFarcasterSupabaseVectorStore } from "@brian-ai/langchain";
+
+const supabaseStore = await createFarcasterSupabaseVectorStore({
+  fid: process.env.FID,
+  neynarApiKey: process.env.NEYNAR_API_KEY,
+  supabaseApiKey: process.env.SUPABASE_API_KEY,
+  supabaseUrl: process.env.SUPABASE_URL,
+});
+```
+
+### Query the store
+
+You can use the `similaritySearch` method on the vector store to retrieve the most similar casts to a given text.
+
+```typescript
+const similarCasts = await supabaseStore.similaritySearch(
+  "Brian is such an awesome project!"
+);
+```
+
+### Query with filters
+
+You can also pass an object with filters to the `similaritySearch` method to filter the results:
+
+```typescript
+const similarCasts = await supabaseStore.similaritySearch(
+  "Brian is such an awesome project!",
+  {
+    metadata: {
+      channelName: "Brian",
+    },
+  }
+);
+```
+
+In this case, only the casts with the metadata field `channelName` equal to `Brian` will be returned.
+
+You can currently filter on these metadata fields:
+
+```json
+{
+  "author": "", // author of the cast
+  "hash": "", // hash of the cast
+  "timestamp": 0, // timestamp of the cast
+  "hasFrames": false, // if the cast has frames or not
+  "channelId": 0, // id of the channel where the cast was published
+  "channelName": "", // name of the channel where the cast was published
+  "parentHash": "", // hash of the parent cast
+  "parentAuthor": "", // author of the parent cast
+  "type": "" // type of the cast
+}
+```
+
+### Retriever
+
+Most of the times, you want to use this store as a `retriever` for easier usage in your chains.
+
+```typescript
+const retriever = supabaseStore.asRetriever({
+  // optional filter
+  filter,
+  k: 2, // number of casts to retrieve
+});
+await retriever.invoke("Brian is such an awesome project!");
+```

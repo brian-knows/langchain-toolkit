@@ -11,7 +11,7 @@ export default defineConfig({
       link: "https://brianknows.org",
     },
     {
-      text: "v1.2.4",
+      text: "v1.2.5",
       link: "https://www.npmjs.com/package/@brian-ai/langchain",
     },
   ],
@@ -59,6 +59,10 @@ export default defineConfig({
           text: "Starknet Toolkit",
           link: "/toolkits/starknet",
         },
+        {
+          text: "Farcaster Toolkit",
+          link: "/toolkits/farcaster",
+        },
       ],
     },
     {
@@ -76,6 +80,30 @@ export default defineConfig({
         {
           text: "Starknet Agent",
           link: "/agents/starknet",
+        },
+      ],
+    },
+    {
+      text: "📝 Vector Stores",
+      collapsed: false,
+      items: [
+        {
+          text: "What are Vector Stores?",
+          link: "/vector-stores",
+        },
+        {
+          text: "🟣 Farcaster",
+          collapsed: false,
+          items: [
+            {
+              text: "Farcaster Memory Store",
+              link: "/vector-stores/farcaster/memory-store",
+            },
+            {
+              text: "Farcaster Supabase Store",
+              link: "/vector-stores/farcaster/supabase-store",
+            },
+          ],
         },
       ],
     },

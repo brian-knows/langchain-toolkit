@@ -1,0 +1,43 @@
+# Farcaster Toolkit
+
+The `FarcasterToolkit` is a simple `langchain` toolkit that exports some useful tools to create new casts on Farcaster, or to reply to existing ones.
+
+This tools can be useful to create a Farcaster AI Agent capable of writing casts on Farcaster.
+
+## Usage
+
+In order to get the tools of the `FarcasterToolkit`, you need to have a valid `SIGNER_UUID` and a `NEYNAR_API_KEY` that will be used to send the casts to Farcaster.
+
+```typescript
+import { FarcasterToolkit } from "@brian-ai/langchain";
+
+const { tools } = new FarcasterToolkit({
+  neynarApiKey: process.env.NEYNAR_API_KEY,
+  signerUUID: process.env.SIGNER_UUID,
+});
+
+// import the tools in your langchain agent
+```
+
+## Tools
+
+### Publish cast
+
+The **publishCast** tool is a tool that allows the agent to publish a new cast on Farcaster.
+
+```typescript
+await publishCastTool.invoke({
+  text: "Brian is such an awesome project!",
+});
+```
+
+### Reply to cast
+
+The **replyTast** tool is a tool that allows the agent to reply to an existing cast on Farcaster.
+
+```typescript
+await replyCastTool.invoke({
+  text: "This is a reply to an existing cast!",
+  cast: CAST_ID,
+});
+```
