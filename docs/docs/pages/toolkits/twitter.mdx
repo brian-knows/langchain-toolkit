@@ -1,0 +1,76 @@
+# Twitter Toolkit
+
+The `TwitterTookit` is a `langchain` toolkit that exports some useful tools to create new posts on Twitter, fetch posts, get the latest trends and so on.
+
+This tools can be useful to create a Twitter AI agent capable of writing posts or analyzing the latest trends on twitter.
+
+## Usage
+
+In order to get the tools of the `TwitterToolkit`, you need to pass a valid `TWITTER_USERNAME`, `TWITTER_PASSWORD` and an optional `TWITTER_EMAIL`.
+
+This toolkit under the hood uses the **ai16z** [`agent-twitter-client`](https://github.com/ai16z/agent-twitter-client) to perform request to Twitter.
+
+```typescript
+import { TwitterToolkit } from "@brian-ai/langchain";
+
+const { tools } = new TwitterToolkit({
+  twitterUsername: process.env.TWITTER_USERNAME!,
+  twitterPassword: process.env.TWITTER_PASSWORD!,
+  twitterEmail: process.env.TWITTER_EMAIL,
+});
+
+// import the tools in your langchain agent
+```
+
+## Tools
+
+### Get latest tweet tool
+
+The **getLatestTweet** tool is a tool that allows the agent to fetch the latest tweet from a specific user given his username.
+
+```typescript
+await getLatestTweetTool.invoke({
+  username: "orbulo.eth",
+});
+```
+
+### Get trends tool
+
+The **getTrends** tool is a tool that allows the agent to fetch the latest trends on Twitter.
+
+```typescript
+await getTrendsTool.invoke({});
+```
+
+### Get tweet tool
+
+The **getTweet** tool is a tool that allows the agent to fetch a specific tweet given its id.
+
+```typescript
+await getTweetTool.invoke({
+  tweetId: "69420",
+});
+```
+
+### Get tweets tool
+
+The **getTweets** tool is a tool that allows the agent to fetch the latest tweets from a specific user given his username.
+
+You can also pass an optional count of tweets to fetch. The default is 5.
+
+```typescript
+await getTweetsTool.invoke({
+  username: "orbulo.eth",
+  count: 10,
+});
+```
+
+### Post tweet tool
+
+The **postTweet** tool is a tool that allows the agent to post a tweet on Twitter.
+
+```typescript
+await postTweetTool.invoke({
+  text: "Hello, I'm a tweet from the Brian Agent!",
+});
+```

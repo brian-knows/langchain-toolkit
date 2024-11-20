@@ -11,7 +11,7 @@ export default defineConfig({
       link: "https://brianknows.org",
     },
     {
-      text: "v1.2.6",
+      text: "v1.2.7",
       link: "https://www.npmjs.com/package/@brian-ai/langchain",
     },
   ],
@@ -76,6 +76,10 @@ export default defineConfig({
         {
           text: "Farcaster Toolkit",
           link: "/toolkits/farcaster",
+        },
+        {
+          text: "Twitter Toolkit",
+          link: "/toolkits/twitter",
         },
       ],
     },
