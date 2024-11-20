@@ -1,0 +1,19 @@
+{
+  "name": "custom-agent",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@brian-ai/langchain": "^1.2.6",
+    "@langchain/core": "^0.3.18",
+    "@langchain/xai": "^0.0.1",
+    "dotenv": "^16.4.5",
+    "langchain": "^0.3.6",
+    "zod": "^3.23.8"
+  }
+}

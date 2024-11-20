@@ -1,0 +1,16 @@
+{
+  "name": "basic-agent",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@brian-ai/langchain": "^1.2.6",
+    "@langchain/openai": "^0.3.14",
+    "dotenv": "^16.4.5"
+  }
+}

@@ -2,13 +2,14 @@
 /node_modules
 /.github
 /test
+/docs
+/examples
+/.vscode
 
 .env
 .DS_Store
-.vscode
 
 tsconfig.json
 tsup.config.ts
 jest.config.ts
 bun.lockb
-docs/
