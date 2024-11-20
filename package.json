@@ -1,6 +1,6 @@
 {
   "name": "@brian-ai/langchain",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Repository containing the LangchainJS toolkit for creating powerful web3 agents.",
   "repository": {
     "url": "git+https://github.com/brian-knows/langchain-toolkit"
@@ -51,6 +51,7 @@
     "@uniswap/smart-order-router": "^4.8.0",
     "@uniswap/v3-sdk": "^3.18.1",
     "@xmtp/message-kit": "1.1.7-beta.26",
+    "agent-twitter-client": "^0.0.13",
     "dotenv": "^16.4.5",
     "ky": "^1.5.0",
     "langchain": "^0.3.5",
