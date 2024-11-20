@@ -4,7 +4,12 @@ import { tryJsonStringify, formatKVMapItem } from "./utils";
 import { LanguageModelLike } from "@langchain/core/language_models/base";
 import { AIMessage } from "@langchain/core/messages";
 
-const generateSystemTemplate = (instructions: string) => {
+/**
+ * @dev generates a system template for the message.
+ * @param {string} instructions - the instructions for the LLM system template.
+ * @returns {string} - the system template.
+ */
+const generateSystemTemplate = (instructions: string): string => {
   return [
     instructions,
     "Generate a message based on the context that the user will provide. This message must be human-readable without any complex terms.",
@@ -13,6 +18,13 @@ const generateSystemTemplate = (instructions: string) => {
   ].join("\n");
 };
 
+/**
+ * @dev generates a message based on the LLM, instructions, and context.
+ * @param {LanguageModelLike} llm - the language model to generate the message.
+ * @param {string} instructions - the instructions for the LLM system template.
+ * @param {string} context - the context for the message.
+ * @returns {Promise<string} the generate AI message.
+ */
 const generateMessage = async (
   llm: LanguageModelLike,
   instructions: string,
@@ -47,6 +59,9 @@ export type XMTPCallbackHandlerOptions = {
   onAgentAction?: boolean;
 };
 
+/**
+ * @dev XMTP callback handler class.
+ */
 export class XMTPCallbackHandler extends BaseTracer {
   name = "xmtp_callback_handler" as const;
   xmtpHandler: HandlerContext;

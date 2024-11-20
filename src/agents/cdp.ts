@@ -15,6 +15,11 @@ export type BrianAgentCDPOptions = BrianCDPToolkitOptions & {
   xmtpHandlerOptions?: XMTPCallbackHandlerOptions;
 };
 
+/**
+ * @dev creates a new "default" Brian CDP agent.
+ * @param {BrianAgentCDPOptions} options - the options for initializing the agent.
+ * @returns {Promise<AgentExecutor>} - the agent executor.
+ */
 export const createBrianCDPAgent = async ({
   instructions,
   apiKey,
@@ -28,7 +33,7 @@ export const createBrianCDPAgent = async ({
   llm,
   xmtpHandler,
   xmtpHandlerOptions,
-}: BrianAgentCDPOptions) => {
+}: BrianAgentCDPOptions): Promise<AgentExecutor> => {
   const brianCDPToolkit = new BrianCDPToolkit({
     apiKey,
     apiUrl,

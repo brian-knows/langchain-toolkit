@@ -1,0 +1,81 @@
+# Create a basic agent
+
+In this guide we'll see how to create a simple basic agent that takes a prompt and executes operations using the `BrianToolkit`.
+
+::::steps
+
+### Create a new project
+
+Create a new bun project using the following commands:
+
+```bash
+mkdir brian-basic-agent
+cd brian-basic-agent
+bun init
+```
+
+Select as your entrypoint of the project `src/index.ts`.
+
+### Install the dependencies
+
+You need to install the following dependencies that we'll need later for the agent:
+
+```bash
+bun i @brian-ai/langchain dotenv @langchain/openai
+```
+
+### Set the environment file
+
+Create a `.env` file inside your newly created project and populate with the following variables:
+
+```bash
+BRIAN_API_KEY="" # your Brian API key
+PRIVATE_KEY="" # the private key of your agent
+OPENAI_API_KEY="" # your OpenAI api key. can be omitted here if set globally
+```
+
+### Create the agent and run it!
+
+Edit the `src/index.ts` file with the following content:
+
+```typescript
+import "dotenv/config";
+import { createBrianAgent } from "@brian-ai/langchain";
+import { ChatOpenAI } from "@langchain/openai";
+
+const BRIAN_API_KEY = process.env.BRIAN_API_KEY;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+
+if (!BRIAN_API_KEY) {
+  throw new Error("BRIAN_API_KEY is not set");
+}
+
+if (!PRIVATE_KEY) {
+  throw new Error("PRIVATE_KEY is not set");
+}
+
+const main = async () => {
+  const brianAgent = await createBrianAgent({
+    apiKey: BRIAN_API_KEY,
+    privateKeyOrAccount: PRIVATE_KEY as `0x${string}`,
+    llm: new ChatOpenAI(),
+  });
+
+  const res = await brianAgent.invoke({
+    input: "Swap 1 USDC for ETH on zkSync",
+  });
+  console.log(res.output);
+};
+
+main();
+```
+
+And then run the agent using the following command:
+
+```bash
+bun src/index.ts
+```
+
+You should see in your terminal the output of the agent.
+
+::::

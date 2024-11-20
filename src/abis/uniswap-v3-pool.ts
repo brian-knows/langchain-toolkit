@@ -1,3 +1,6 @@
+/**
+ * @dev Uniswap V3 Pool ABI.
+ */
 export const UNISWAP_V3_POOL_ABI = [
   {
     anonymous: false,

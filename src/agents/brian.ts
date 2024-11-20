@@ -15,6 +15,11 @@ export type BrianAgentOptions = BrianToolkitOptions & {
   xmtpHandlerOptions?: XMTPCallbackHandlerOptions;
 };
 
+/**
+ * @dev creates a new "default" Brian agent.
+ * @param {BrianAgentOptions} options - the options for initializing the agent.
+ * @returns {Promise<AgentExecutor>} - the agent executor.
+ */
 export const createBrianAgent = async ({
   instructions,
   apiKey,
@@ -24,7 +29,7 @@ export const createBrianAgent = async ({
   xmtpHandler,
   xmtpHandlerOptions,
   options,
-}: BrianAgentOptions) => {
+}: BrianAgentOptions): Promise<AgentExecutor> => {
   const { tools } = new BrianToolkit({
     apiKey,
     apiUrl,

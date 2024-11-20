@@ -48,20 +48,12 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "Create your first agent",
-          link: "/guides/create-agent",
+          text: "Create a basic agent",
+          link: "/guides/create-basic-agent",
         },
         {
-          text: "Interact with your agent",
-          link: "/guides/interact-agent",
-        },
-        {
-          text: "Add memory",
-          link: "/guides/add-memory-agent",
-        },
-        {
-          text: "Agent deployment",
-          link: "/guides/deploy-agent",
+          text: "ERC20 Deployer Agent",
+          link: "/guides/erc20-deploy-agent",
         },
       ],
     },

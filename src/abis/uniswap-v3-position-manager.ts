@@ -1,3 +1,6 @@
+/**
+ * @dev Uniswap V3 Position Manager ABI.
+ */
 export const NON_FUNGIBLE_POSITION_MANAGER_ABI = [
   {
     inputs: [
