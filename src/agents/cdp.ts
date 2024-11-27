@@ -5,6 +5,7 @@ import {
 import { BrianCDPToolkitOptions, BrianCDPToolkit } from "@/toolkits";
 import { LanguageModelLike } from "@langchain/core/language_models/base";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ToolInterface } from "@langchain/core/tools";
 import { HandlerContext } from "@xmtp/message-kit";
 import { createToolCallingAgent, AgentExecutor } from "langchain/agents";
 
@@ -13,6 +14,7 @@ export type BrianAgentCDPOptions = BrianCDPToolkitOptions & {
   instructions?: string;
   xmtpHandler?: HandlerContext;
   xmtpHandlerOptions?: XMTPCallbackHandlerOptions;
+  tools?: ToolInterface[];
 };
 
 /**
@@ -33,6 +35,7 @@ export const createBrianCDPAgent = async ({
   llm,
   xmtpHandler,
   xmtpHandlerOptions,
+  tools: customTools = [],
 }: BrianAgentCDPOptions): Promise<AgentExecutor> => {
   const brianCDPToolkit = new BrianCDPToolkit({
     apiKey,
@@ -57,7 +60,7 @@ export const createBrianCDPAgent = async ({
 
   const agent = createToolCallingAgent({
     llm,
-    tools,
+    tools: [...tools, ...customTools],
     prompt,
   });
 

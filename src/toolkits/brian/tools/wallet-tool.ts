@@ -35,7 +35,6 @@ export const createGetWalletTool = (brianSDK: BrianSDK, account: Account) => {
           account.address,
           chainTokens[chainId]
         );
-        console.log(chainId, tokens, account.address);
         if (!tokens) {
           return `You don't own any tokens on ${chain.name}. Maybe try with a different one?`;
         }

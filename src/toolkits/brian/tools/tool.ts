@@ -7,6 +7,7 @@ import { Account } from "viem";
 
 export type BrianToolOptions = {
   gelatoApiKey?: string;
+  etherscanApiKey?: string;
 };
 
 export class BrianTool extends DynamicStructuredTool {

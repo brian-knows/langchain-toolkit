@@ -17,6 +17,19 @@ const agent = await createBrianStarknetAgent({
 });
 ```
 
+You can also pass custom tools to the agent by passing the `tools` option:
+
+```typescript
+const agent = await createBrianStarknetAgent({
+  apiKey: "your-brian-api-key",
+  account: starknetAccount, // type Account from "starknet"
+  llm: new ChatOpenAI(),
+  tools: [
+    /* ...your custom tools here */
+  ],
+});
+```
+
 ## Invoking the agent
 
 Once the agent is created, you can invoke it with a given input:

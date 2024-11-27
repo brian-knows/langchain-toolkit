@@ -36,19 +36,32 @@ export const createDeployTokenTool = (
         const deployPrompt = `Deploy an ERC-20 token with name ${name}, symbol ${symbol} and total supply ${totalSupply}`;
 
         const apiResult = await ky.post<{
-          result: { abi: any; bytecode: Hex };
-        }>("https://api.brianknows.org/api/v0/agent/smart-contract", {
+          result: {
+            contract: string;
+            contractName: string;
+            version: string;
+            abi: any;
+            bytecode: Hex;
+          };
+        }>("https://staging-api.brianknows.org/api/v0/agent/smart-contract", {
           headers: {
             "Content-Type": "application/json",
             "x-brian-api-key": process.env.BRIAN_API_KEY,
           },
+          timeout: 60000,
           json: {
             prompt: deployPrompt,
             compile: true,
           },
         });
         const { result } = await apiResult.json();
-        const { abi, bytecode } = result;
+        const {
+          contract: code,
+          contractName,
+          version: solidityVersion,
+          abi,
+          bytecode,
+        } = result;
 
         const network = getChain(chainId);
 
@@ -80,8 +93,51 @@ export const createDeployTokenTool = (
           `Transaction executed successfully, this is the transaction link: ${network.blockExplorers?.default.url}/tx/${deployTxHash}`
         );
 
+        if (options?.etherscanApiKey && network.blockExplorers?.default) {
+          // wait 5 seconds before verifying the smart contract
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          // verify the smart contract
+          const parsedCode = code.replace("```solidity", "").replace("```", "");
+          //.replace("\n", " ");
+          try {
+            const key = `contracts/${contractName}.sol`;
+            const formData = new FormData();
+            formData.append("chainId", network.id.toString());
+            formData.append("codeformat", "solidity-standard-json-input");
+            formData.append(
+              "sourceCode",
+              JSON.stringify({
+                language: "Solidity",
+                sources: {
+                  [key]: {
+                    content: parsedCode,
+                  },
+                },
+              })
+            );
+            formData.append("contractaddress", receipt.contractAddress!);
+            formData.append(
+              "contractname",
+              `contracts/${contractName}.sol:${contractName}`
+            );
+            formData.append("compilerversion", `v${solidityVersion}`);
+
+            await ky.post(
+              `${network.blockExplorers?.default.url}/api?module=contract&action=verifysourcecode&apiKey=${options.etherscanApiKey}`,
+              {
+                body: formData,
+                headers: {},
+              }
+            );
+            console.log("Smart contract verified successfully!");
+          } catch (error) {
+            console.error(error);
+          }
+        }
+
         return `Smart contract deployed successfully! I've created the token ${name} with symbol ${symbol} and ${totalSupply} total supply at this address: ${receipt.contractAddress} - You can check the transaction here: ${network.blockExplorers?.default.url}/tx/${deployTxHash}`;
       } catch (error) {
+        console.error(error);
         return `Calling deploy token tool with arguments:\n\n${JSON.stringify({
           name,
           symbol,

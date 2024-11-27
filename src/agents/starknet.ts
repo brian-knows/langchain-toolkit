@@ -5,6 +5,7 @@ import {
 import { BrianStarknetToolkitOptions, BrianStarknetToolkit } from "@/toolkits";
 import { LanguageModelLike } from "@langchain/core/language_models/base";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ToolInterface } from "@langchain/core/tools";
 import { HandlerContext } from "@xmtp/message-kit";
 import { createToolCallingAgent, AgentExecutor } from "langchain/agents";
 
@@ -13,6 +14,7 @@ export type BrianStarknetAgentOptions = BrianStarknetToolkitOptions & {
   instructions?: string;
   xmtpHandler?: HandlerContext;
   xmtpHandlerOptions?: XMTPCallbackHandlerOptions;
+  tools?: ToolInterface[];
 };
 
 /**
@@ -28,6 +30,7 @@ export const createBrianStarknetAgent = async ({
   llm,
   xmtpHandler,
   xmtpHandlerOptions,
+  tools: customTools = [],
 }: BrianStarknetAgentOptions): Promise<AgentExecutor> => {
   const { tools } = new BrianStarknetToolkit({
     apiKey,
@@ -44,7 +47,7 @@ export const createBrianStarknetAgent = async ({
 
   const agent = createToolCallingAgent({
     llm,
-    tools,
+    tools: [...tools, ...customTools],
     prompt,
   });
 
