@@ -1,19 +1,27 @@
 import { TransactionData } from "@brian-ai/sdk";
 import { Account, createPublicClient, createWalletClient, http } from "viem";
 import { BrianToolOptions } from "./tool";
-import { getChain } from "@/utils";
+import { getChain, isZkChain } from "@/utils";
 import {
   CallWithERC2771Request,
   GelatoRelay,
 } from "@gelatonetwork/relay-sdk-viem";
+import { eip712WalletActions } from "viem/zksync";
 
 export const getChainAndClients = (account: Account, chainId: number) => {
   const network = getChain(chainId);
-  const walletClient = createWalletClient({
-    account,
-    chain: network,
-    transport: http(),
-  });
+
+  const walletClient = isZkChain(chainId)
+    ? createWalletClient({
+        account,
+        chain: network,
+        transport: http(),
+      }).extend(eip712WalletActions())
+    : createWalletClient({
+        account,
+        chain: network,
+        transport: http(),
+      });
   const publicClient = createPublicClient({
     chain: network,
     transport: http(),

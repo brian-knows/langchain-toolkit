@@ -13,6 +13,12 @@ export const getChain = (chainId: number): Chain => {
   throw new Error(`Chain with id ${chainId} not found`);
 };
 
+export const isZkChain = (chainId: number) => {
+  const zkChains: number[] = [chains.zksync.id]; // extend this list with other zk chains
+
+  return zkChains.includes(chainId);
+};
+
 export const roundToFirstDecimal = (value: number) => {
   if (value >= 1) {
     return value.toFixed(1);
